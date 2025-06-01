@@ -1,0 +1,86 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes; // Untuk fitur soft delete
+
+class DataSet extends Model
+{
+    use HasFactory, SoftDeletes;
+
+
+    protected $table = 'datasets'; // Sesuai dengan nama tabel di migrasi
+
+    protected $fillable = [
+        'id_organisasi',
+        'judul',
+        'slug',
+        'deskripsi_dataset',
+        'satuan',
+        'frekuensi_pembaruan',
+        'dasar_rujukan_prioritas',
+        'lisensi',
+        'penulis_kontak',
+        'email_penulis_kontak',
+        'pemelihara_data',
+        'email_pemelihara_data',
+        'sumber_data',
+        'tanggal_rilis',
+        'tanggal_modifikasi_metadata',
+        'cakupan_waktu_mulai',
+        'cakupan_waktu_selesai',
+        'is_publik',
+        'jumlah_dilihat',
+        'metadata_tambahan',
+        'kepatuhan_standar_data',
+        'url_kamus_data',
+        'created_by_user_id',
+        'updated_by_user_id',
+    ];
+
+    protected $casts = [
+        'tanggal_rilis' => 'date', // Kolom `tanggal_rilis` bertipe date
+        'tanggal_modifikasi_metadata' => 'date', // Kolom `tanggal_modifikasi_metadata` bertipe date
+        'is_publik' => 'boolean', // Kolom `is_publik` bertipe boolean
+        'metadata_tambahan' => 'array', // Kolom `metadata_tambahan` bertipe json
+        'jumlah_dilihat' => 'integer', // Kolom `jumlah_dilihat` bertipe unsignedInteger
+
+    ];
+
+    public function organization(): BelongsTo
+    {
+        return $this->belongsTo(Organization::class);
+    }
+
+    public function resources(): HasMany
+    {
+        return $this->hasMany(Resource::class);
+    }
+
+
+    public function createdBy()
+    {
+        return $this->belongsTo(User::class, 'created_by_user_id');
+    }
+
+    public function updatedBy()
+    {
+        return $this->belongsTo(User::class, 'updated_by_user_id');
+    }
+
+
+    public function tags(): BelongsToMany
+    {
+        return $this->belongsToMany(Tag::class);
+    }
+
+    public function scopeWithRelations($query)
+    {
+        return $query->with(['organization', 'tags', 'resources']);
+    }
+}
