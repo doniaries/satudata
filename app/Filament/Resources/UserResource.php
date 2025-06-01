@@ -32,12 +32,15 @@ class UserResource extends Resource
         return $form
             ->schema([
                 Forms\Components\Select::make('id_organisasi')
-                    ->relationship('organisasis', 'nama_organisasi')
+                    ->relationship('organization', 'name')
+                    ->label('Organisasi')
+                    ->searchable()
+                    ->preload()
                     ->default(function () {
                         // Mengambil pengguna yang sedang login
                         $user = Auth::user();
                         // Mengembalikan id_organisasi dari pengguna jika ada
-                        return $user ? $user->id_organisasi : null;
+                        return $user ? $user->organization->id : null;
                     })
                     ->required(),
                 Forms\Components\TextInput::make('name')
@@ -54,11 +57,7 @@ class UserResource extends Resource
                     ->maxLength(255),
                 Forms\Components\Toggle::make('is_active')
                     ->required(),
-                Forms\Components\TextInput::make('theme')
-                    ->maxLength(255)
-                    ->default('default'),
-                Forms\Components\TextInput::make('theme_color')
-                    ->maxLength(255),
+
             ]);
     }
 
@@ -66,7 +65,7 @@ class UserResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('organisasis.nama_organisasi')
+                Tables\Columns\TextColumn::make('organization.name')
                     ->label('Organisasi')
                     ->searchable()
                     ->sortable(),

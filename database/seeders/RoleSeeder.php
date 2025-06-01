@@ -16,7 +16,7 @@ class RoleSeeder extends Seeder
 
         // Buat roles
         $superAdmin = Role::firstOrCreate(['name' => 'super_admin', 'guard_name' => 'web']);
-        $admin = Role::firstOrCreate(['name' => 'admin', 'guard_name' => 'web']);
+        $adminSatudata = Role::firstOrCreate(['name' => 'admin_satudata', 'guard_name' => 'web']);
         $user = Role::firstOrCreate(['name' => 'user', 'guard_name' => 'web']);
 
         // Get all permissions
@@ -30,7 +30,7 @@ class RoleSeeder extends Seeder
             return !str_contains($permission->name, 'role') &&
                 !str_contains($permission->name, 'permission');
         });
-        $admin->syncPermissions($adminPermissions);
+        $adminSatudata->syncPermissions($adminPermissions);
 
         // Assign basic permissions to user
         $userPermissions = $permissions->filter(function ($permission) {

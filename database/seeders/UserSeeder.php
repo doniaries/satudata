@@ -35,79 +35,40 @@ class UserSeeder extends Seeder
                 $this->command->warn('Role super_admin tidak ditemukan');
             }
 
-            // Ambil organisasi Dinas Komunikasi dan Informatika
-            $kominfo = Organization::where('slug', 'dinas-komunikasi-dan-informatika')->first();
+            // Ambil semua organisasi yang ada
+            $organizations = Organization::all();
 
-            if ($kominfo) {
-                // Data user untuk organisasi Dinas Komunikasi dan Informatika
-                $kominfoUsers = [
-                    [
-                        'name' => 'Admin Kominfo',
-                        'email' => 'adminsekrekominfo@gmail.com',
-                        'password' => 'password',
-                        'role' => 'admin_opd',
-                    ],
-                    [
-                        'name' => 'Admin Bidang TI',
-                        'email' => 'adminbidangti@gmail.com',
-                        'password' => 'password',
-                        'role' => 'admin_opd',
-                    ]
-                ];
-
-                // Buat user untuk organisasi Kominfo
-                foreach ($kominfoUsers as $userData) {
-                    $user = User::updateOrCreate(
-                        ['email' => $userData['email']],
-                        [
-                            'name' => $userData['name'],
-                            'password' => Hash::make($userData['password']),
-                            'id_organization' => $kominfo->id,
-                            'is_active' => true,
-                        ]
-                    );
-
-                    // Assign role dengan pengecekan
-                    if (Role::where('name', $userData['role'])->exists()) {
-                        $user->assignRole($userData['role']);
-                    } else {
-                        $this->command->warn("Role {$userData['role']} tidak ditemukan");
-                    }
+            // Buat user untuk setiap organisasi
+            foreach ($organizations as $organization) {
+                // Skip creating user for super_admin's organization if it's null
+                if ($organization->id === null) {
+                    continue;
                 }
-            } else {
-                $this->command->warn("Organisasi Dinas Komunikasi dan Informatika tidak ditemukan");
-            }
 
-            // Buat sample user untuk beberapa organisasi lain
-            $sampleOrganizations = [
-                'dinas-kesehatan',
-                'dinas-pendidikan-dan-kebudayaan',
-                'sekretariat-daerah'
-            ];
+                $emailSlug = str_replace('-', '', $organization->slug);
+                $email = "admin{$emailSlug}@sijunjung.go.id";
 
-            foreach ($sampleOrganizations as $orgSlug) {
-                $organization = Organization::where('slug', $orgSlug)->first();
-                if ($organization) {
-                    $user = User::updateOrCreate(
-                        ['email' => "admin@{$orgSlug}.go.id"],
-                        [
-                            'name' => "Admin {$organization->name}",
-                            'password' => Hash::make('password'),
-                            'id_organization' => $organization->id,
-                            'is_active' => true,
-                        ]
-                    );
+                $user = User::updateOrCreate(
+                    ['email' => $email],
+                    [
+                        'name' => "Admin {$organization->name}",
+                        'password' => Hash::make('password'), // Password default
+                        'id_organization' => $organization->id,
+                        'is_active' => true,
+                    ]
+                );
 
-                    if (Role::where('name', 'admin_opd')->exists()) {
-                        $user->assignRole('admin_opd');
-                    }
+                // Assign role admin_opd dengan pengecekan
+                if (Role::where('name', 'admin_opd')->exists()) {
+                    $user->assignRole('admin_opd');
+                } else {
+                    $this->command->warn("Role admin_opd tidak ditemukan");
                 }
             }
 
             $this->command->info('UserSeeder berhasil dijalankan!');
-            // $this->command->info('Super Admin: superadmin@gmail.com / @Iamsuperadmin');
-            // $this->command->info('Admin Kominfo: adminsekrekominfo@gmail.com / password');
-            // $this->command->info('Admin Bidang TI: adminbidangti@gmail.com / password');
+            $this->command->info('Super Admin: superadmin@gmail.com / @Iamsuperadmin');
+            $this->command->info('Sample Admin OPD: admin[organizationslug]@sijunjung.go.id / password');
         });
     }
 

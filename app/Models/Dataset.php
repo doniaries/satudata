@@ -16,6 +16,8 @@ class DataSet extends Model
 
     protected $table = 'datasets'; // Sesuai dengan nama tabel di migrasi
 
+
+
     protected $fillable = [
         'id_organisasi',
         'judul',
@@ -54,7 +56,7 @@ class DataSet extends Model
 
     public function organization(): BelongsTo
     {
-        return $this->belongsTo(Organization::class);
+        return $this->belongsTo(Organization::class, 'id_organization', 'id');
     }
 
     public function resources(): HasMany
@@ -76,7 +78,7 @@ class DataSet extends Model
 
     public function tags(): BelongsToMany
     {
-        return $this->belongsToMany(Tag::class);
+        return $this->belongsToMany(Tag::class, 'dataset_tag');
     }
 
     public function scopeWithRelations($query)

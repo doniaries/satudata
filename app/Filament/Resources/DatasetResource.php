@@ -12,6 +12,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Auth;
 
 class DatasetResource extends Resource
 {
@@ -21,11 +22,40 @@ class DatasetResource extends Resource
 
     public static function form(Form $form): Form
     {
+        $user = Auth::user();
+        $isSuperAdmin = $user->hasRole('super_admin');
+        $isAdminSatuData = $user->hasRole('admin_satudata');
+
         return $form
             ->schema([
-                Forms\Components\TextInput::make('id_organization')
-                    ->required()
-                    ->numeric(),
+                Forms\Components\Select::make('id_organization')
+                    ->label('Organisasi Produsen Data') // Label untuk field
+                    ->relationship('organization', 'name') // Relasi ke model Organization, menampilkan kolom 'name'
+                    ->searchable() // Memungkinkan pencarian pada opsi select
+                    ->preload() // Memuat opsi saat halaman dimuat
+                    ->required() // Field ini wajib diisi
+                    // Logika untuk menentukan apakah field bisa diedit atau tidak
+                    ->disabled(function () use ($isSuperAdmin, $isAdminSatuData) {
+                        // Jika bukan super_admin ATAU admin_satudata, maka field di-disable
+                        return !$isSuperAdmin && !$isAdminSatuData;
+                    })
+                    // Logika untuk menentukan nilai default
+                    ->default(function () use ($user, $isSuperAdmin, $isAdminSatuData) {
+                        // Jika user adalah super_admin atau admin_satudata, mereka bisa memilih, jadi tidak ada default spesifik di sini
+                        // kecuali Anda ingin menentukan default lain untuk mereka (misalnya organisasi pertama).
+                        // Untuk user biasa, defaultnya adalah organisasi mereka.
+                        if (!$isSuperAdmin && !$isAdminSatuData) {
+                            return $user?->id_organization; // Mengambil id_organization dari user yang login
+                        }
+                        return null; // Tidak ada default untuk admin, biarkan mereka memilih
+                    }),
+
+                // ->helperText(function () use ($isSuperAdmin, $isAdminSatuData) {
+                //     if (!$isSuperAdmin && !$isAdminSatuData) {
+                //         return 'Organisasi otomatis diisi berdasarkan akun Anda.';
+                //     }
+                //     return 'Pilih organisasi produsen data.';
+                // }),
                 Forms\Components\TextInput::make('judul')
                     ->required()
                     ->maxLength(255),
@@ -83,8 +113,8 @@ class DatasetResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('id_organization')
-                    ->numeric()
+                Tables\Columns\TextColumn::make('organization.name')
+                    // ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('judul')
                     ->searchable(),

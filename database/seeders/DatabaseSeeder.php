@@ -20,7 +20,7 @@ class DatabaseSeeder extends Seeder
             RoleSeeder::class,
             ShieldSeeder::class,
             UserSeeder::class,
-            // DatasetSeeder::class,
+            DatasetSeeder::class,
         ]);
     }
 }
