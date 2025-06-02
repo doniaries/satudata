@@ -15,10 +15,17 @@ class DatasetSeeder extends Seeder
      */
     public function run(): void
     {
-        // Ambil ID organisasi pertama sebagai contoh, atau sesuaikan dengan kebutuhan Anda
-        $organization = Organization::first();
-        if (!$organization) {
-            $this->command->error('Tidak ada Organisasi ditemukan. Jalankan OrganizationsSeeder terlebih dahulu.');
+        // Ambil ID organisasi Dinas Komunikasi dan Informatika
+        $kominfoOrg = Organization::where('slug', 'dinas-komunikasi-dan-informatika')->first();
+        if (!$kominfoOrg) {
+            $this->command->error('Organisasi Dinas Komunikasi dan Informatika tidak ditemukan.');
+            return;
+        }
+
+        // Ambil ID organisasi Dinas Kependudukan Dan Pencatatan Sipil
+        $dukcapilOrg = Organization::where('slug', 'dinas-kependudukan-dan-pencatatan-sipil')->first();
+        if (!$dukcapilOrg) {
+            $this->command->error('Organisasi Dinas Kependudukan Dan Pencatatan Sipil tidak ditemukan.');
             return;
         }
 
@@ -31,7 +38,7 @@ class DatasetSeeder extends Seeder
 
         $datasets = [
             [
-                'id_organization' => $organization->id, // Produsen Data
+                'id_organization' => $dukcapilOrg->id, // Produsen Data: Dinas Kependudukan Dan Pencatatan Sipil
                 'judul' => 'Jumlah Penduduk Kabupaten Sijunjung 2022',
                 'deskripsi_dataset' => 'Data jumlah penduduk per kecamatan di Kabupaten Sijunjung pada tahun 2022.',
                 'satuan' => 'Orang',
@@ -56,27 +63,27 @@ class DatasetSeeder extends Seeder
                 'updated_by_user_id' => $user->id,
             ],
             [
-                'id_organization' => $organization->id,
-                'judul' => 'Angka Partisipasi Sekolah di Kota Bukittinggi 2023',
-                'deskripsi_dataset' => 'Dataset mengenai Angka Partisipasi Sekolah (APS) berdasarkan jenjang pendidikan di Kota Bukittinggi untuk tahun 2023.',
-                'satuan' => 'Persen',
+                'id_organization' => $kominfoOrg->id, // Produsen Data: Dinas Komunikasi dan Informatika
+                'judul' => 'Sijunjung Dalam Angka 2023',
+                'deskripsi_dataset' => 'Dataset mengenai data statistik Kabupaten Sijunjung tahun 2023.',
+                'satuan' => 'Data',
                 'frekuensi_pembaruan' => 'Tahunan',
-                'dasar_rujukan_prioritas' => 'Indikator Kinerja Utama (IKU) Pendidikan Kota Bukittinggi',
-                'lisensi' => 'Data Terbuka Pemerintah Kota Bukittinggi',
-                'penulis_kontak' => 'Seksi Data Pendidikan',
-                'email_penulis_kontak' => 'data.pendidikan@bukittinggikota.go.id',
-                'pemelihara_data' => 'Dinas Pendidikan dan Kebudayaan Kota Bukittinggi',
-                'email_pemelihara_data' => 'disdikbud@bukittinggikota.go.id',
-                'sumber_data' => 'Survei Sosial Ekonomi Nasional (Susenas) - Modul Pendidikan',
-                'tanggal_rilis' => '2024-04-10',
-                'tanggal_modifikasi_metadata' => '2024-04-20',
+                'dasar_rujukan_prioritas' => 'Rencana Pembangunan Jangka Menengah Daerah (RPJMD)',
+                'lisensi' => 'Open Government Licence',
+                'penulis_kontak' => 'Tim Statistik Daerah',
+                'email_penulis_kontak' => 'statistik@sijunjung.go.id',
+                'pemelihara_data' => 'Dinas Komunikasi dan Informatika Kabupaten Sijunjung',
+                'email_pemelihara_data' => 'diskominfo@sijunjung.go.id',
+                'sumber_data' => 'Berbagai OPD di Kabupaten Sijunjung',
+                'tanggal_rilis' => '2024-01-20',
+                'tanggal_modifikasi_metadata' => '2024-02-01',
                 'cakupan_waktu_mulai' => '2023-01-01',
                 'cakupan_waktu_selesai' => '2023-12-31',
                 'is_publik' => true,
-                'jumlah_dilihat' => 250,
-                'metadata_tambahan' => json_encode(['tingkat_akurasi' => 'Estimasi sampel dengan margin of error 5%']),
-                'kepatuhan_standar_data' => 'Standar Data Sektoral Pendidikan',
-                'url_kamus_data' => 'https://bukittinggikota.go.id/kamus_data/aps_2023',
+                'jumlah_dilihat' => 300,
+                'metadata_tambahan' => json_encode(['cakupan_geografis' => 'Kabupaten Sijunjung']),
+                'kepatuhan_standar_data' => 'Standar Data Indonesia',
+                'url_kamus_data' => 'https://sijunjung.go.id/kamus_data/sijunjung_dalam_angka_2023',
                 'created_by_user_id' => $user->id,
                 'updated_by_user_id' => $user->id,
             ],
