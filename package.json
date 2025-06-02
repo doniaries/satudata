@@ -16,6 +16,8 @@
         "vite": "^6.0.11"
     },
     "dependencies": {
-        "tailwindcss": "^4.1.8"
+        "preline": "^3.0.1",
+        "tailwindcss": "^4.1.8",
+        "vanilla-calendar-pro": "^3.0.4"
     }
 }
