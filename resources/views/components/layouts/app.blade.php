@@ -10,10 +10,12 @@
     @livewireStyles
 </head>
 
-<body>
+<body class="bg-slate-20 dark:bg-slate-700">
+    @livewire('partials.navbar')
     <main>
         {{ $slot }}
     </main>
+    @livewire('partials.footer')
     @livewireScripts
 </body>
 

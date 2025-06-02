@@ -5,8 +5,9 @@ export default {
         "./resources/**/*.js",
         "./resources/**/*.vue",
     ],
+    darkMode: "class",
     theme: {
         extend: {},
     },
-    plugins: [],
+    plugins: [require("preline/plugin")],
 };
