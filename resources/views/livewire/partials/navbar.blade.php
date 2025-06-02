@@ -59,6 +59,21 @@
                                 class="py-0.5 px-1.5 rounded-full text-xs font-medium bg-blue-50 border border-blue-200 text-blue-600">4</span>
                         </a>
 
+                        {{-- <button x-data="{ dark: localStorage.getItem('theme') === 'dark' }" x-init="if (dark) { document.documentElement.classList.add('dark') } else { document.documentElement.classList.remove('dark') }"
+                            @click="dark = !dark; localStorage.setItem('theme', dark ? 'dark' : 'light'); document.documentElement.classList.toggle('dark', dark)"
+                            type="button"
+                            class="ml-4 flex items-center px-3 py-2 rounded-lg border border-gray-200 text-gray-800 bg-white hover:bg-gray-100 dark:bg-gray-700 dark:text-white dark:border-gray-700 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <svg x-show="!dark" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 3v1m0 16v1m8.66-13.66l-.71.71M4.05 19.07l-.71.71M21 12h-1M4 12H3m16.66 4.95l-.71-.71M4.05 4.93l-.71-.71M12 5a7 7 0 1 0 0 14a7 7 0 0 0 0-14z" />
+                            </svg>
+                            <svg x-show="dark" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79z" />
+                            </svg>
+                        </button> --}}
                         <div class="pt-3 md:pt-0">
                             <a class="py-2.5 px-4 inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600"
                                 href="/login">
