@@ -5,14 +5,15 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>{{ $title ?? 'Satu Data Sijunjung' }}</title>
-    @vite('resources/css/app.css', 'resources/js/app.js')
+    <title>{{ $title ?? 'Satu Data Kabupaten Sijunjung' }}</title>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
+
 </head>
 
-<body class="bg-slate-20 dark:bg-slate-700">
+<body>
     @livewire('partials.navbar')
-    <main>
+    <main class="min-h-screen">
         {{ $slot }}
     </main>
     @livewire('partials.footer')
@@ -20,3 +21,5 @@
 </body>
 
 </html>
+
+{{-- Pastikan semua link global sesuai dengan navigasi utama --}}
