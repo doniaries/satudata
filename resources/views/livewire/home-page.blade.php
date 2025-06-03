@@ -4,11 +4,16 @@
         <div class="container mx-auto px-8 lg:flex items-center">
             <!-- Left Column: Content and Search -->
             <div class="lg:w-1/2 flex flex-col justify-center">
-                <h1 class="text-4xl lg:text-5xl xl:text-6xl font-bold leading-tight text-center lg:text-left">
+                <h1 class="text-4xl lg:text-4xl xl:text-5xl font-bold leading-tight text-center lg:text-left">
                     <div><span class="text-blue-800 font-bold">Satu</span> <span
                             class="text-blue-600 font-bold">Data</span></div>
                     <div class="text-white-600">Kabupaten Sijunjung</div>
                 </h1>
+                <p class="text-xl lg:text-2xl mt-6 font-light max-w-2xl text-center lg:text-left">
+                    Sijunjung yang
+                    <span id="typing-text" class="typed-text"></span>
+                    <span class="typing-cursor">|</span>
+                </p>
                 <p class="text-xl lg:text-2xl mt-6 font-light max-w-2xl text-center lg:text-left">Sistem Informasi
                     Terintegrasi dan Terpadu<br>Kabupaten Sijunjung</p>
                 <div class="mt-8 md:mt-12 max-w-2xl mx-auto lg:mx-0">
@@ -37,5 +42,76 @@
                 </div>
             </div>
         </div>
+
+        <style>
+            .typing-cursor {
+                display: inline-block;
+                animation: blink 1s infinite;
+            }
+
+            @keyframes blink {
+
+                0%,
+                50% {
+                    opacity: 1;
+                }
+
+                51%,
+                100% {
+                    opacity: 0;
+                }
+            }
+
+            .typed-text {
+                display: inline-block;
+            }
+        </style>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const words = ['Bersih', 'Berwibawa', 'Maju'];
+                const typingElement = document.getElementById('typing-text');
+                const cursor = document.querySelector('.typing-cursor');
+
+                let wordIndex = 0;
+                let charIndex = 0;
+                let isDeleting = false;
+                let typingSpeed = 150;
+                let deletingSpeed = 100;
+                let pauseTime = 2000;
+
+                function typeWriter() {
+                    const currentWord = words[wordIndex];
+
+                    if (isDeleting) {
+                        typingElement.textContent = currentWord.substring(0, charIndex - 1);
+                        charIndex--;
+
+                        if (charIndex === 0) {
+                            isDeleting = false;
+                            wordIndex = (wordIndex + 1) % words.length;
+                            setTimeout(typeWriter, 500);
+                            return;
+                        }
+                        setTimeout(typeWriter, deletingSpeed);
+                    } else {
+                        typingElement.textContent = currentWord.substring(0, charIndex + 1);
+                        charIndex++;
+
+                        if (charIndex === currentWord.length) {
+                            setTimeout(() => {
+                                isDeleting = true;
+                                typeWriter();
+                            }, pauseTime);
+                            return;
+                        }
+                        setTimeout(typeWriter, typingSpeed);
+                    }
+                }
+
+                // Mulai efek ketik setelah delay singkat
+                setTimeout(typeWriter, 1000);
+            });
+        </script>
     </section>
 </div>

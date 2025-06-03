@@ -202,7 +202,7 @@
                             class="nav-link block py-2.5 px-4 rounded-lg transition-all duration-200 hover:scale-105 relative"
                             :class="window.location.pathname === '/dataset' ?
                                 'text-white bg-blue-600 hover:bg-blue-700 shadow-md' :
-                                'text-gray-700 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 hover:text-blue-700'">Data</a>
+                                'text-gray-700 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 hover:text-blue-700'">Dataset</a>
                     </li>
                     <li>
                         <a href="/organization"
