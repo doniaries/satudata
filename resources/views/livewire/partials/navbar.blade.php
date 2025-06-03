@@ -17,7 +17,7 @@
     }
 }" :class="{ 'bg-white shadow-lg': !scrolled, 'bg-white/80 backdrop-blur-sm': scrolled }"
     class="sticky top-0 z-50 transition-all duration-300">
-    <nav class="container mx-auto px-4 lg:px-6 py-2.5">
+    <nav class="font-roboto" class="container mx-auto px-4 lg:px-6 py-2.5">
         <div class="flex flex-wrap justify-between items-center mx-auto max-w-screen-xl">
             <a href="/" class="flex items-center space-x-2">
                 <img src="{{ asset('images/kabupaten-sijunjung.png') }}" class="h-10 sm:h-12"

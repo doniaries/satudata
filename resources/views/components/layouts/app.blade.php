@@ -8,7 +8,12 @@
     <title>{{ $title ?? 'Satu Data Kabupaten Sijunjung' }}</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
-
+    <style>
+        @import url('https://fonts.googleapis.com/css?family=Roboto:400,500,700&display=swap');
+        .font-roboto, .font-roboto * {
+            font-family: 'Roboto', Arial, sans-serif !important;
+        }
+    </style>
 </head>
 
 <body>

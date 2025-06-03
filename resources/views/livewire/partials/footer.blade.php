@@ -1,7 +1,7 @@
-<footer class="bg-gray-800 dark:bg-gray-900">
+<footer class="font-roboto bg-gray-800 dark:bg-gray-900">
     <div class="container mx-auto px-4 py-6 lg:py-8 md:flex md:items-center md:justify-between">
-        <span class="text-sm text-gray-300 dark:text-gray-400 sm:text-center">© 2025 <a
-                href="https://satudata.bulelengkab.go.id/" class="hover:underline">Satu Data Kabupaten Sijunjung™</a>. All
+        <span class="text-sm text-gray-300 dark:text-gray-400 sm:text-center"> 2025 <a
+                href="https://satudata.bulelengkab.go.id/" class="hover:underline">Satu Data Kabupaten Sijunjung</a>. All
             Rights Reserved.
         </span>
         <div class="flex mt-4 space-x-5 sm:justify-center md:mt-0">

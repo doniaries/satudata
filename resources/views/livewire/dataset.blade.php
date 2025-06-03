@@ -1,4 +1,4 @@
-<div class="flex bg-gray-100 min-h-screen">
+<div class="flex bg-gray-100 min-h-screen font-roboto">
     <!-- Sidebar Organisasi -->
     <aside class="w-64 bg-white border-r p-4">
         <h2 class="font-bold mb-2">Organisasi</h2>

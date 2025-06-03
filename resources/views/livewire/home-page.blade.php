@@ -1,4 +1,4 @@
-<div class="flex flex-col">
+<div class="flex flex-col font-roboto">
     <section class="w-full pt-2 md:pt-6 bg-no-repeat bg-cover bg-center"
         style="background-image: url('{{ asset('images/bg-vector.png') }}');">
         <div class="container mx-auto px-8 lg:flex items-center">
