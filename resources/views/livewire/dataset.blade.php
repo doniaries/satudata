@@ -100,7 +100,6 @@
 
         <div class="flex-1 px-4 py-8">
             <div class="max-w-4xl mx-auto">
-                <h2 class="text-xl font-bold mb-6">{{ $datasets->total() }} dataset found</h2>
                 @forelse ($datasets as $dataset)
                     <div class="bg-white rounded-xl shadow-md mb-6 p-6 border border-gray-200">
                         <div class="font-bold text-lg mb-1">{{ $dataset->judul_dataset }}</div>
@@ -108,7 +107,8 @@
                         <div class="text-sm italic text-red-500 mb-2">
                             {{ $dataset->deskripsi_dataset ? Str::limit($dataset->deskripsi_dataset, 80) : 'This dataset has no description' }}
                         </div>
-                        <a href="#" class="inline-block bg-red-600 text-white text-xs px-3 py-1 rounded font-bold">PDF</a>
+                        <a href="#"
+                            class="inline-block bg-red-600 text-white text-xs px-3 py-1 rounded font-bold">PDF</a>
                     </div>
                 @empty
                     <div class="text-gray-500">No dataset found.</div>
