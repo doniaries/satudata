@@ -1,20 +1,22 @@
 <div class="flex bg-gray-100 min-h-screen font-roboto">
     <!-- Sidebar Organisasi, tag, format-->
     <aside class="w-64 bg-white border-r p-4">
-        <h2 class="font-bold mb-2">Organisasi</h2>
+        <h2 class="font-bold mb-2 flex items-center gap-2 text-gray-700 text-base">
+            <!-- Heroicon: tag -->
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                stroke="currentColor" class="size-6">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h12m-.75 4.5H21m-3.75 3.75h.008v.008h-.008v-.008Zm0 3h.008v.008h-.008v-.008Zm0 3h.008v.008h-.008v-.008Z" />
+            </svg>
+
+            Organisasi
+        </h2>
         <ul class="space-y-1 text-sm">
             @foreach ($showAllOrganizations ? $organizations : $organizations->take(10) as $org)
                 <li
                     class="flex justify-between items-center rounded transition cursor-pointer hover:bg-blue-100 hover:shadow-sm group">
                     <span class="flex items-center gap-2 truncate group-hover:text-blue-700 transition"
                         title="{{ $org->name }}">
-                        <!-- Heroicon: building-office-2 -->
-                        {{-- <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                            stroke="currentColor"
-                            class="w-4 h-4 text-blue-400 flex-shrink-0 group-hover:text-blue-600 transition">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                d="M3.75 21h16.5M4.5 21V5.25A2.25 2.25 0 0 1 6.75 3h10.5A2.25 2.25 0 0 1 19.5 5.25V21m-15 0v-2.25A2.25 2.25 0 0 1 6.75 16.5h10.5a2.25 2.25 0 0 1 2.25 2.25V21M9 7.5h6m-6 3h6m-6 3h6" />
-                        </svg> --}}
                         {{ $org->name }}
                     </span>
                     <span
@@ -34,11 +36,12 @@
         <h2 class="font-bold mb-2 flex items-center gap-2 text-gray-700 text-base">
             <!-- Heroicon: tag -->
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                stroke="currentColor" class="w-4 h-4 text-gray-400">
+                stroke="currentColor" class="size-6">
                 <path stroke-linecap="round" stroke-linejoin="round"
-                    d="M2.25 12.75V6.75A2.25 2.25 0 0 1 4.5 4.5h6a2.25 2.25 0 0 1 1.59.66l8.25 8.25a2.25 2.25 0 0 1 0 3.18l-6.75 6.75a2.25 2.25 0 0 1-3.18 0l-8.25-8.25A2.25 2.25 0 0 1 2.25 12.75z" />
-                <circle cx="8.25" cy="8.25" r="1.75" />
+                    d="M9.568 3H5.25A2.25 2.25 0 0 0 3 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 0 0 5.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 0 0 9.568 3Z" />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 6h.008v.008H6V6Z" />
             </svg>
+
             Tag
         </h2>
         <ul class="space-y-1 text-sm">
