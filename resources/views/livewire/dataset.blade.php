@@ -91,35 +91,47 @@
             <!-- Main Content -->
             <main class="flex-1 bg-white">
                 <!-- Header Section -->
-                <div class="bg-blue-600 text-white p-8">
-                    <div class="flex items-center gap-3 mb-4">
-                        <div class="bg-white bg-opacity-20 p-2 rounded-lg">
+                <div class="bg-white p-8 rounded-lg">
+                    <div class="flex items-center space-x-3 mb-4">
+                        <!-- Dataset Icon dari Heroicons -->
+                        <div class="bg-white/20 p-3 rounded-lg">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                stroke-width="1.5" stroke="currentColor" class="size-6">
                                 <path stroke-linecap="round" stroke-linejoin="round"
-                                    d="M3.375 19.5h17.25m-17.25 0a1.125 1.125 0 0 1-1.125-1.125M3.375 19.5h1.5C5.496 19.5 6 18.996 6 18.375m-3.75 0V5.625m0 12.75v-1.5c0-.621.504-1.125 1.125-1.125m18.375 2.625a1.125 1.125 0 0 0 1.125-1.125m-1.125 1.125h-1.5A1.125 1.125 0 0 1 18 18.375m3.75 0V5.625m0 12.75v-1.5c0-.621-.504-1.125-1.125-1.125M21 7.875v11.25" />
+                                    d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25M9 16.5v.75m3-3v3M15 12v5.25m-4.5-15H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
+                            </svg>
+
+                        </div>
+                        <h1 class="text-2xl font-bold text-gray-700">DATASET</h1>
+                    </div>
+
+                    <p class="text-gray-700/90 text-lg mb-6">
+                        Temukan kumpulan data-data mentah (dataset) berupa tabel yang bisa diolah lebih lanjut di sini.
+                    </p>
+
+                    <!-- Search Box dengan Icon -->
+                    <div class="relative max-w-5xl">
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                            <!-- Search Icon dari Heroicons -->
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+                                stroke="currentColor" class="w-5 h-5 text-gray-400">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
                             </svg>
                         </div>
-                        <h1 class="text-2xl font-bold">DATASET</h1>
-                    </div>
-                    <p class="text-blue-100 mb-6">Temukan kumpulan data-data mentah (dataset) berupa tabel yang bisa
-                        diolah lebih lanjut di sini.</p>
-
-                    <!-- Search Bar -->
-                    <form wire:submit.prevent="" class="mb-4">
-                        <div class="relative">
-                            <input type="text" wire:model.defer="search" placeholder="Cari dataset"
-                                class="w-full bg-white text-gray-900 rounded-lg px-4 py-3 pr-12 focus:outline-none focus:ring-2 focus:ring-blue-300" />
-                            <button type="submit"
-                                class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500">
+                        <input type="text" placeholder="Cari dataset"
+                            class="w-full pl-12 pr-4 py-4 text-gray-700 bg-white border-0 rounded-xl shadow-lg focus:outline-none focus:ring-4 focus:ring-white/30 focus:shadow-xl transition-all duration-300 text-lg placeholder-gray-500" />
+                        <div class="absolute inset-y-0 right-0 pr-4 flex items-center">
+                            <!-- Filter Icon dari Heroicons (optional) -->
+                            <button class="p-2 text-gray-400 hover:text-gray-600 transition-colors duration-200">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                    stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                                    stroke-width="2" stroke="currentColor" class="w-5 h-5">
                                     <path stroke-linecap="round" stroke-linejoin="round"
-                                        d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+                                        d="M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 0 1-.659 1.591l-5.432 5.432a2.25 2.25 0 0 0-.659 1.591v2.927a2.25 2.25 0 0 1-1.244 2.013L9.75 21v-6.568a2.25 2.25 0 0 0-.659-1.591L3.659 7.409A2.25 2.25 0 0 1 3 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0 1 12 3Z" />
                                 </svg>
                             </button>
                         </div>
-                    </form>
+                    </div>
                 </div>
 
                 <!-- Content Area -->

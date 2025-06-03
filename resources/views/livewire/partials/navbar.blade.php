@@ -86,23 +86,67 @@
             transform: translateY(-10px);
             opacity: 0;
         }
+
+        /* Enhanced hover effects */
+        .nav-link {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.1), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .nav-link:hover::before {
+            left: 100%;
+        }
+
+        .login-btn {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.4s ease, height 0.4s ease;
+        }
+
+        .login-btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
     </style>
 
-    <nav class="font-roboto container mx-auto px-4 lg:px-6 py-4 lg:py-6">
+    <nav class="font-roboto container mx-auto px-4 lg:px-6 py-3 lg:py-4">
         <div class="flex flex-wrap justify-between items-center mx-auto max-w-screen-xl">
             <!-- Logo dengan efek shiny dari logo ke nama aplikasi -->
             <a href="/" class="logo-brand-container flex items-center space-x-4 py-2 px-2 rounded-xl">
                 <div class="logo-image">
                     <img src="{{ asset('images/kabupaten-sijunjung.png') }}"
-                        class="h-14 sm:h-16 lg:h-18 w-auto object-contain drop-shadow-md"
+                        class="h-12 sm:h-14 lg:h-16 w-auto object-contain drop-shadow-md"
                         alt="Logo Kabupaten Sijunjung" />
                 </div>
                 <div class="brand-text flex flex-col">
                     <div class="flex items-center space-x-1">
-                        <span class="text-xl lg:text-3xl font-bold text-blue-800 drop-shadow-sm">Satu</span>
-                        <span class="text-xl lg:text-3xl font-bold text-blue-400 drop-shadow-sm">Data</span>
+                        <span class="text-lg lg:text-2xl font-bold text-blue-800 drop-shadow-sm">Satu</span>
+                        <span class="text-lg lg:text-2xl font-bold text-blue-400 drop-shadow-sm">Data</span>
                     </div>
-                    <span class="text-sm lg:text-lg font-medium transition-colors duration-300"
+                    <span class="text-sm lg:text-base font-medium transition-colors duration-300"
                         :class="scrolled ? 'text-gray-700' : 'text-gray-600'">Kabupaten Sijunjung</span>
                 </div>
             </a>
@@ -110,10 +154,10 @@
             <!-- Desktop menu dan tombol login -->
             <div class="flex items-center lg:order-2 space-x-3">
                 <a href="/admin/login"
-                    class="text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 rounded-lg text-sm px-4 py-2.5 focus:outline-none transition-all duration-200 flex items-center justify-center shadow-md hover:shadow-lg transform hover:scale-105"
+                    class="login-btn text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 rounded-lg text-sm px-4 py-2.5 focus:outline-none transition-all duration-200 flex items-center justify-center shadow-md hover:shadow-lg transform hover:scale-105 relative z-10"
                     title="Login">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                        stroke="currentColor" class="w-5 h-5">
+                        stroke="currentColor" class="w-5 h-5 relative z-10">
                         <path stroke-linecap="round" stroke-linejoin="round"
                             d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15m3 0 3-3m0 0-3-3m3 3H9" />
                     </svg>
@@ -148,39 +192,31 @@
                 <ul class="flex flex-row space-x-2 font-medium">
                     <li>
                         <a href="/"
-                            class="block py-2.5 px-4 rounded-lg transition-all duration-200 hover:scale-105"
+                            class="nav-link block py-2.5 px-4 rounded-lg transition-all duration-200 hover:scale-105 relative"
                             :class="window.location.pathname === '/' ?
                                 'text-white bg-blue-600 hover:bg-blue-700 shadow-md' :
-                                (scrolled ?
-                                    'text-gray-700 hover:bg-gray-100' :
-                                    'text-gray-700 hover:bg-gray-100')">Beranda</a>
+                                'text-gray-700 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 hover:text-blue-700'">Beranda</a>
                     </li>
                     <li>
                         <a href="/dataset"
-                            class="block py-2.5 px-4 rounded-lg transition-all duration-200 hover:scale-105"
+                            class="nav-link block py-2.5 px-4 rounded-lg transition-all duration-200 hover:scale-105 relative"
                             :class="window.location.pathname === '/dataset' ?
                                 'text-white bg-blue-600 hover:bg-blue-700 shadow-md' :
-                                (scrolled ?
-                                    'text-gray-700 hover:bg-gray-100' :
-                                    'text-gray-700 hover:bg-gray-100')">Data</a>
+                                'text-gray-700 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 hover:text-blue-700'">Data</a>
                     </li>
                     <li>
                         <a href="/organization"
-                            class="block py-2.5 px-4 rounded-lg transition-all duration-200 hover:scale-105"
+                            class="nav-link block py-2.5 px-4 rounded-lg transition-all duration-200 hover:scale-105 relative"
                             :class="window.location.pathname === '/organization' ?
                                 'text-white bg-blue-600 hover:bg-blue-700 shadow-md' :
-                                (scrolled ?
-                                    'text-gray-700 hover:bg-gray-100' :
-                                    'text-gray-700 hover:bg-gray-100')">Organisasi</a>
+                                'text-gray-700 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 hover:text-blue-700'">Organisasi</a>
                     </li>
                     <li>
                         <a href="/tentang"
-                            class="block py-2.5 px-4 rounded-lg transition-all duration-200 hover:scale-105"
+                            class="nav-link block py-2.5 px-4 rounded-lg transition-all duration-200 hover:scale-105 relative"
                             :class="window.location.pathname === '/tentang' ?
                                 'text-white bg-blue-600 hover:bg-blue-700 shadow-md' :
-                                (scrolled ?
-                                    'text-gray-700 hover:bg-gray-100' :
-                                    'text-gray-700 hover:bg-gray-100')">Tentang</a>
+                                'text-gray-700 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 hover:text-blue-700'">Tentang</a>
                     </li>
                 </ul>
             </div>
