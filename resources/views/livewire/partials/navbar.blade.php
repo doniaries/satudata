@@ -1,11 +1,34 @@
-<header class="bg-white dark:bg-gray-900 shadow-lg sticky top-0 z-50">
+<header x-data="{
+    scrolled: false,
+    init() {
+        this.$watch('scrolled', (value) => {
+            const header = this.$el;
+            if (value) {
+                header.classList.remove('bg-white', 'shadow-lg');
+                header.classList.add('bg-white/80', 'backdrop-blur-sm');
+            } else {
+                header.classList.add('bg-white', 'shadow-lg');
+                header.classList.remove('bg-white/80', 'backdrop-blur-sm');
+            }
+        });
+        window.addEventListener('scroll', () => {
+            this.scrolled = window.scrollY > 10;
+        });
+    }
+}" :class="{ 'bg-white shadow-lg': !scrolled, 'bg-white/80 backdrop-blur-sm': scrolled }"
+    class="sticky top-0 z-50 transition-all duration-300">
     <nav class="container mx-auto px-4 lg:px-6 py-2.5">
         <div class="flex flex-wrap justify-between items-center mx-auto max-w-screen-xl">
             <a href="/" class="flex items-center space-x-2">
-                <img src="{{ asset('images/kabupaten-sijunjung.png') }}" class="h-10 sm:h-12" alt="Logo Kabupaten Sijunjung" />
+                <img src="{{ asset('images/kabupaten-sijunjung.png') }}" class="h-10 sm:h-12"
+                    alt="Logo Kabupaten Sijunjung" />
                 <div class="flex flex-col">
-                    <span class="text-lg font-bold text-gray-900 dark:text-white">Satu Data</span>
-                    <span class="text-sm font-medium text-gray-600 dark:text-gray-300">Kabupaten Sijunjung</span>
+                    <div class="flex items-center space-x-1">
+                        <span class="text-lg font-bold text-blue-800">Satu</span>
+                        <span class="text-lg font-bold text-blue-400">Data</span>
+                    </div>
+                    <span class="text-sm font-medium text-gray-600 dark:text-gray-800 transition-colors duration-300"
+                        :class="{ 'text-white/90': scrolled, 'text-gray-600': !scrolled }">Kabupaten Sijunjung</span>
                 </div>
             </a>
             <div class="flex items-center lg:order-2">
@@ -33,21 +56,45 @@
             <div class="hidden justify-between items-center w-full lg:flex lg:w-auto lg:order-1" id="mobile-menu-2">
                 <ul class="flex flex-col mt-4 font-medium lg:flex-row lg:space-x-2 lg:mt-0">
                     <li>
-                        <a href="/"
-                            class="block py-2 px-4 rounded-lg text-white bg-blue-600 hover:bg-blue-700 transition-colors duration-200"
+                        <a href="/" class="block py-2 px-4 rounded-lg transition-colors duration-200"
+                            :class="$el.closest('li').classList.contains('active') || $el.getAttribute('href') === window
+                                .location.pathname ?
+                                'text-white bg-blue-600 hover:bg-blue-700' :
+                                (scrolled ?
+                                    'text-white/90 hover:bg-white/20' :
+                                    'text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700')
+                            }"
                             aria-current="page">Beranda</a>
                     </li>
                     <li>
-                        <a href="/data"
-                            class="block py-2 px-4 rounded-lg text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700 transition-colors duration-200">Data</a>
+                        <a href="/data" class="block py-2 px-4 rounded-lg transition-colors duration-200"
+                            :class="$el.closest('li').classList.contains('active') || $el.getAttribute('href') === window
+                                .location.pathname ?
+                                'text-white bg-blue-600 hover:bg-blue-700' :
+                                (scrolled ?
+                                    'text-white/90 hover:bg-white/20' :
+                                    'text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700')
+                            }">Data</a>
                     </li>
                     <li>
-                        <a href="/organisasi"
-                            class="block py-2 px-4 rounded-lg text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700 transition-colors duration-200">Organisasi</a>
+                        <a href="/organisasi" class="block py-2 px-4 rounded-lg transition-colors duration-200"
+                            :class="$el.closest('li').classList.contains('active') || $el.getAttribute('href') === window
+                                .location.pathname ?
+                                'text-white bg-blue-600 hover:bg-blue-700' :
+                                (scrolled ?
+                                    'text-white/90 hover:bg-white/20' :
+                                    'text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700')
+                            }">Organisasi</a>
                     </li>
                     <li>
-                        <a href="/tentang"
-                            class="block py-2 px-4 rounded-lg text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700 transition-colors duration-200">Tentang</a>
+                        <a href="/tentang" class="block py-2 px-4 rounded-lg transition-colors duration-200"
+                            :class="$el.closest('li').classList.contains('active') || $el.getAttribute('href') === window
+                                .location.pathname ?
+                                'text-white bg-blue-600 hover:bg-blue-700' :
+                                (scrolled ?
+                                    'text-white/90 hover:bg-white/20' :
+                                    'text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700')
+                            }">Tentang</a>
                     </li>
                 </ul>
             </div>
