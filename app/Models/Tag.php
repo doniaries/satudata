@@ -21,6 +21,6 @@ class Tag extends Model
 
     public function datasets(): BelongsToMany
     {
-        return $this->belongsToMany(Dataset::class);
+        return $this->belongsToMany(Dataset::class, 'dataset_tags');
     }
 }
