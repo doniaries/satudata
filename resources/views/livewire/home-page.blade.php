@@ -35,10 +35,10 @@
             </div>
             <!-- Right Column: Combined Image (Bigger, No Box) -->
             <div class="lg:w-1/2 flex justify-center lg:justify-end items-center">
-                <div class="w-full max-w-3xl flex items-center justify-center">
+                <div class="w-full max-w-3xl flex items-center justify-center image-container">
                     <img src="{{ asset('images/bupatiwakil.png') }}" alt="Bupati dan Wakil Bupati Sijunjung"
-                        class="w-full h-auto max-h-[500px] object-contain animate-slide-in-right"
-                        style="animation: slideInRight 0.8s ease-out forwards;">
+                        class="w-full h-auto max-h-[500px] object-contain animate-slide-in-right shiny-image"
+                        style="animation: slideInRight 0.8s ease-out forwards;" id="bupati-image">
                 </div>
             </div>
         </div>
@@ -47,6 +47,9 @@
             .typing-cursor {
                 display: inline-block;
                 animation: blink 1s infinite;
+                color: #1f2937;
+                font-weight: bold;
+                text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
             }
 
             @keyframes blink {
@@ -64,12 +67,105 @@
 
             .typed-text {
                 display: inline-block;
+                font-weight: bold;
+                text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.7), 1px 1px 2px rgba(0, 0, 0, 0.8);
+            }
+
+            .typed-text.bersih {
+                color: #fcfcfc;
+                /* Green */
+                text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.7), 1px 1px 2px rgba(0, 0, 0, 0.8), 0 0 10px rgba(16, 185, 129, 0.3);
+            }
+
+            .typed-text.berwibawa {
+                color: #ffffff;
+                /* Blue */
+                text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.7), 1px 1px 2px rgba(0, 0, 0, 0.8), 0 0 10px rgba(59, 130, 246, 0.3);
+            }
+
+            .typed-text.maju {
+                color: #ffffff;
+                /* Amber/Orange */
+                text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.7), 1px 1px 2px rgba(0, 0, 0, 0.8), 0 0 10px rgba(245, 158, 11, 0.3);
+            }
+
+            /* Shiny effect styles */
+            .image-container {
+                position: relative;
+                overflow: hidden;
+            }
+
+            .shiny-image {
+                position: relative;
+                transition: transform 0.3s ease;
+            }
+
+            .shiny-image::before {
+                content: '';
+                position: absolute;
+                top: -100%;
+                left: -100%;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(45deg,
+                        transparent 30%,
+                        rgba(255, 255, 255, 0.3) 50%,
+                        rgba(255, 255, 255, 0.8) 60%,
+                        rgba(255, 255, 255, 0.3) 70%,
+                        transparent 80%);
+                transform: translateX(-100%) translateY(-100%) rotate(45deg);
+                transition: transform 0.8s ease-in-out;
+                pointer-events: none;
+                z-index: 1;
+            }
+
+            .shiny-image.shine::before {
+                transform: translateX(200%) translateY(200%) rotate(45deg);
+            }
+
+            /* Auto shine animation */
+            @keyframes autoShine {
+                0% {
+                    transform: translateX(-100%) translateY(-100%) rotate(45deg);
+                }
+
+                100% {
+                    transform: translateX(200%) translateY(200%) rotate(45deg);
+                }
+            }
+
+            .shiny-image.auto-shine::before {
+                animation: autoShine 0.8s ease-in-out;
+            }
+
+            /* Optional: Add subtle glow effect during shine */
+            .shiny-image.shine {
+                filter: brightness(1.1);
+                transform: scale(1.02);
+            }
+
+            .shiny-image.auto-shine {
+                filter: brightness(1.1);
+                transform: scale(1.02);
             }
         </style>
 
         <script>
             document.addEventListener('DOMContentLoaded', function() {
-                const words = ['Bersih', 'Berwibawa', 'Maju'];
+                // Typing effect script
+                const words = [{
+                        text: 'Bersih',
+                        class: 'bersih'
+                    },
+                    {
+                        text: 'Berwibawa',
+                        class: 'berwibawa'
+                    },
+                    {
+                        text: 'Maju',
+                        class: 'maju'
+                    }
+                ];
                 const typingElement = document.getElementById('typing-text');
                 const cursor = document.querySelector('.typing-cursor');
 
@@ -84,7 +180,7 @@
                     const currentWord = words[wordIndex];
 
                     if (isDeleting) {
-                        typingElement.textContent = currentWord.substring(0, charIndex - 1);
+                        typingElement.textContent = currentWord.text.substring(0, charIndex - 1);
                         charIndex--;
 
                         if (charIndex === 0) {
@@ -95,10 +191,11 @@
                         }
                         setTimeout(typeWriter, deletingSpeed);
                     } else {
-                        typingElement.textContent = currentWord.substring(0, charIndex + 1);
+                        typingElement.textContent = currentWord.text.substring(0, charIndex + 1);
+                        typingElement.className = 'typed-text ' + currentWord.class;
                         charIndex++;
 
-                        if (charIndex === currentWord.length) {
+                        if (charIndex === currentWord.text.length) {
                             setTimeout(() => {
                                 isDeleting = true;
                                 typeWriter();
@@ -111,6 +208,25 @@
 
                 // Mulai efek ketik setelah delay singkat
                 setTimeout(typeWriter, 1000);
+
+                // Auto shiny effect script
+                const bupatiImage = document.getElementById('bupati-image');
+
+                function addShinyEffect() {
+                    bupatiImage.classList.add('auto-shine');
+
+                    // Remove the class after animation completes
+                    setTimeout(() => {
+                        bupatiImage.classList.remove('auto-shine');
+                    }, 800);
+                }
+
+                // Start shiny effect after initial slide-in animation completes
+                // Then repeat every 4 seconds
+                setTimeout(() => {
+                    addShinyEffect();
+                    setInterval(addShinyEffect, 4000);
+                }, 2000); // Wait 2 seconds for slide-in to complete
             });
         </script>
     </section>
