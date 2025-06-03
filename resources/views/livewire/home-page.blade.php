@@ -5,7 +5,8 @@
             <!-- Left Column: Content and Search -->
             <div class="lg:w-1/2 flex flex-col justify-center">
                 <h1 class="text-4xl lg:text-5xl xl:text-6xl font-bold leading-tight text-center lg:text-left">
-                    <div><span class="text-blue-800 font-bold">Satu</span> <span class="text-blue-400 font-bold">Data</span></div>
+                    <div><span class="text-blue-800 font-bold">Satu</span> <span
+                            class="text-blue-600 font-bold">Data</span></div>
                     <div class="text-white-600">Kabupaten Sijunjung</div>
                 </h1>
                 <p class="text-xl lg:text-2xl mt-6 font-light max-w-2xl text-center lg:text-left">Sistem Informasi

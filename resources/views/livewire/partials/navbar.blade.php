@@ -67,7 +67,7 @@
                             aria-current="page">Beranda</a>
                     </li>
                     <li>
-                        <a href="/data" class="block py-2 px-4 rounded-lg transition-colors duration-200"
+                        <a href="/dataset" class="block py-2 px-4 rounded-lg transition-colors duration-200"
                             :class="$el.closest('li').classList.contains('active') || $el.getAttribute('href') === window
                                 .location.pathname ?
                                 'text-white bg-blue-600 hover:bg-blue-700' :
