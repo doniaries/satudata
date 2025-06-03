@@ -98,23 +98,22 @@
         <!-- Jumlah Dataset -->
         <h2 class="text-2xl font-bold mb-2">{{ number_format($totalDatasets, 0, ',', '.') }} dataset found</h2>
 
-        <!-- List Dataset -->
-        <div class="space-y-8">
-            @forelse($datasets as $dataset)
-                <div class="border-b pb-4">
-                    <div class="font-bold text-lg">{{ $dataset->judul }}</div>
-                    <div class="text-sm text-gray-500 mb-2">
-                        {{ $dataset->organization->name ?? '-' }}
+        <div class="flex-1 px-4 py-8">
+            <div class="max-w-4xl mx-auto">
+                <h2 class="text-xl font-bold mb-6">{{ $datasets->total() }} dataset found</h2>
+                @forelse ($datasets as $dataset)
+                    <div class="bg-white rounded-xl shadow-md mb-6 p-6 border border-gray-200">
+                        <div class="font-bold text-lg mb-1">{{ $dataset->judul_dataset }}</div>
+                        <div class="text-xs text-gray-500 mb-1">{{ $dataset->organization->name ?? '-' }}</div>
+                        <div class="text-sm italic text-red-500 mb-2">
+                            {{ $dataset->deskripsi_dataset ? Str::limit($dataset->deskripsi_dataset, 80) : 'This dataset has no description' }}
+                        </div>
+                        <a href="#" class="inline-block bg-red-600 text-white text-xs px-3 py-1 rounded font-bold">PDF</a>
                     </div>
-                    <div class="text-sm italic text-red-500 mb-2">
-                        {{ $dataset->deskripsi_dataset ? Str::limit($dataset->deskripsi_dataset, 80) : 'This dataset has no description' }}
-                    </div>
-                    <a href="#"
-                        class="inline-block bg-red-600 text-white text-xs px-3 py-1 rounded font-bold">PDF</a>
-                </div>
-            @empty
-                <div class="text-gray-500">No dataset found.</div>
-            @endforelse
+                @empty
+                    <div class="text-gray-500">No dataset found.</div>
+                @endforelse
+            </div>
         </div>
         <div class="mt-6">
             {{ $datasets->links() }}
