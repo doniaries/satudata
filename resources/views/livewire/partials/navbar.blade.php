@@ -18,12 +18,12 @@
 
         // Auto shine effect setiap 5 detik
         setInterval(() => {
-            const logoImage = this.$el.querySelector('.logo-image');
-            if (logoImage) {
-                logoImage.classList.add('auto-shine');
+            const logoContainer = this.$el.querySelector('.logo-brand-container');
+            if (logoContainer) {
+                logoContainer.classList.add('auto-shine');
                 setTimeout(() => {
-                    logoImage.classList.remove('auto-shine');
-                }, 800);
+                    logoContainer.classList.remove('auto-shine');
+                }, 1200);
             }
         }, 5000);
     }
@@ -32,32 +32,37 @@
 
     <!-- CSS untuk efek shiny -->
     <style>
-        .logo-image {
+        .logo-brand-container {
             position: relative;
             overflow: hidden;
-            border-radius: 8px;
         }
 
-        .logo-image::before {
+        .logo-brand-container::before {
             content: '';
             position: absolute;
-            top: -2px;
+            top: 0;
             left: -100%;
             width: 100%;
-            height: calc(100% + 4px);
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.6), transparent);
-            transition: left 0.8s ease-in-out;
-            z-index: 1;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.7), transparent);
+            transition: left 1.2s ease-in-out;
+            z-index: 10;
+            pointer-events: none;
         }
 
-        .logo-image:hover::before,
-        .logo-image.auto-shine::before {
+        .logo-brand-container:hover::before,
+        .logo-brand-container.auto-shine::before {
             left: 100%;
         }
 
-        .logo-image img {
+        .logo-image {
             position: relative;
-            z-index: 0;
+            border-radius: 8px;
+            flex-shrink: 0;
+        }
+
+        .brand-text {
+            position: relative;
         }
 
         .mobile-menu-enter {
@@ -85,19 +90,19 @@
 
     <nav class="font-roboto container mx-auto px-4 lg:px-6 py-4 lg:py-6">
         <div class="flex flex-wrap justify-between items-center mx-auto max-w-screen-xl">
-            <!-- Logo dengan efek shiny -->
-            <a href="/" class="flex items-center space-x-3">
+            <!-- Logo dengan efek shiny dari logo ke nama aplikasi -->
+            <a href="/" class="logo-brand-container flex items-center space-x-4 py-2 px-2 rounded-xl">
                 <div class="logo-image">
                     <img src="{{ asset('images/kabupaten-sijunjung.png') }}"
-                        class="h-12 sm:h-14 lg:h-16 w-auto object-contain drop-shadow-sm"
+                        class="h-14 sm:h-16 lg:h-18 w-auto object-contain drop-shadow-md"
                         alt="Logo Kabupaten Sijunjung" />
                 </div>
-                <div class="flex flex-col">
+                <div class="brand-text flex flex-col">
                     <div class="flex items-center space-x-1">
-                        <span class="text-xl lg:text-2xl font-bold text-blue-800 drop-shadow-sm">Satu</span>
-                        <span class="text-xl lg:text-2xl font-bold text-blue-400 drop-shadow-sm">Data</span>
+                        <span class="text-xl lg:text-3xl font-bold text-blue-800 drop-shadow-sm">Satu</span>
+                        <span class="text-xl lg:text-3xl font-bold text-blue-400 drop-shadow-sm">Data</span>
                     </div>
-                    <span class="text-sm lg:text-base font-medium transition-colors duration-300"
+                    <span class="text-sm lg:text-lg font-medium transition-colors duration-300"
                         :class="scrolled ? 'text-gray-700' : 'text-gray-600'">Kabupaten Sijunjung</span>
                 </div>
             </a>
