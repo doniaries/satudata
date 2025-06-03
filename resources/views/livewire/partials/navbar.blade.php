@@ -32,9 +32,16 @@
                 </div>
             </a>
             <div class="flex items-center lg:order-2">
-                <a href="/login"
-                    class="text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2 focus:outline-none transition-colors duration-200">
-                    Log in
+                <a href="/admin/login"
+                    class="text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 rounded-lg text-sm px-3 py-2 mr-2 focus:outline-none transition-colors duration-200 flex items-center justify-center"
+                    title="Login">
+                    <!-- Heroicon: user-circle -->
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                        stroke="currentColor" class="size-6">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15m3 0 3-3m0 0-3-3m3 3H9" />
+                    </svg>
+
                 </a>
                 <button data-collapse-toggle="mobile-menu-2" type="button"
                     class="inline-flex items-center p-2 ml-1 text-sm text-gray-500 rounded-lg lg:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
@@ -77,7 +84,7 @@
                             }">Data</a>
                     </li>
                     <li>
-                        <a href="/organisasi" class="block py-2 px-4 rounded-lg transition-colors duration-200"
+                        <a href="/organization" class="block py-2 px-4 rounded-lg transition-colors duration-200"
                             :class="$el.closest('li').classList.contains('active') || $el.getAttribute('href') === window
                                 .location.pathname ?
                                 'text-white bg-blue-600 hover:bg-blue-700' :
