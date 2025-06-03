@@ -1,16 +1,18 @@
-<header class="bg-transparent backdrop-blur-md bg-opacity-60 sticky top-0 z-50">
+<header class="bg-white dark:bg-gray-900 shadow-lg sticky top-0 z-50">
     <nav class="container mx-auto px-4 lg:px-6 py-2.5">
         <div class="flex flex-wrap justify-between items-center mx-auto max-w-screen-xl">
-            <a href="/" class="flex items-center">
-                <img src="https://satudata.Sijunjungkab.go.id/assets/images/logo-satudata.png" class="mr-3 h-6 sm:h-9"
-                    alt="Satu Data Sijunjung Logo" />
-                <span
-                    class="self-center text-xl font-semibold whitespace-nowrap dark:text-white">{{ config('app.name') }}</span>
+            <a href="/" class="flex items-center space-x-2">
+                <img src="{{ asset('images/kabupaten-sijunjung.png') }}" class="h-10 sm:h-12" alt="Logo Kabupaten Sijunjung" />
+                <div class="flex flex-col">
+                    <span class="text-lg font-bold text-gray-900 dark:text-white">Satu Data</span>
+                    <span class="text-sm font-medium text-gray-600 dark:text-gray-300">Kabupaten Sijunjung</span>
+                </div>
             </a>
             <div class="flex items-center lg:order-2">
                 <a href="/login"
-                    class="text-gray-800 dark:text-white hover:bg-gray-50 focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2 dark:hover:bg-gray-700 focus:outline-none dark:focus:ring-gray-800">Log
-                    in</a>
+                    class="text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2 focus:outline-none transition-colors duration-200">
+                    Log in
+                </a>
                 <button data-collapse-toggle="mobile-menu-2" type="button"
                     class="inline-flex items-center p-2 ml-1 text-sm text-gray-500 rounded-lg lg:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
                     aria-controls="mobile-menu-2" aria-expanded="false">
@@ -29,23 +31,23 @@
                 </button>
             </div>
             <div class="hidden justify-between items-center w-full lg:flex lg:w-auto lg:order-1" id="mobile-menu-2">
-                <ul class="flex flex-col mt-4 font-medium lg:flex-row lg:space-x-8 lg:mt-0">
+                <ul class="flex flex-col mt-4 font-medium lg:flex-row lg:space-x-2 lg:mt-0">
                     <li>
                         <a href="/"
-                            class="block py-2 pr-4 pl-3 text-white rounded bg-primary-700 lg:bg-transparent lg:text-primary-700 lg:p-0 dark:text-white"
+                            class="block py-2 px-4 rounded-lg text-white bg-blue-600 hover:bg-blue-700 transition-colors duration-200"
                             aria-current="page">Beranda</a>
                     </li>
                     <li>
                         <a href="/data"
-                            class="block py-2 pr-4 pl-3 text-gray-700 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-primary-700 lg:p-0 dark:text-gray-400 lg:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white lg:dark:hover:bg-transparent dark:border-gray-700">Data</a>
+                            class="block py-2 px-4 rounded-lg text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700 transition-colors duration-200">Data</a>
                     </li>
                     <li>
                         <a href="/organisasi"
-                            class="block py-2 pr-4 pl-3 text-gray-700 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-primary-700 lg:p-0 dark:text-gray-400 lg:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white lg:dark:hover:bg-transparent dark:border-gray-700">Organisasi</a>
+                            class="block py-2 px-4 rounded-lg text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700 transition-colors duration-200">Organisasi</a>
                     </li>
                     <li>
                         <a href="/tentang"
-                            class="block py-2 pr-4 pl-3 text-gray-700 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-primary-700 lg:p-0 dark:text-gray-400 lg:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white lg:dark:hover:bg-transparent dark:border-gray-700">Tentang</a>
+                            class="block py-2 px-4 rounded-lg text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700 transition-colors duration-200">Tentang</a>
                     </li>
                 </ul>
             </div>
