@@ -154,7 +154,7 @@
             <!-- Desktop menu dan tombol login -->
             <div class="flex items-center lg:order-2 space-x-3">
                 <a href="/admin/login"
-                    class="login-btn text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 rounded-lg text-sm px-4 py-2.5 focus:outline-none transition-all duration-200 flex items-center justify-center shadow-md hover:shadow-lg transform hover:scale-105 relative z-10"
+                    class="login-btn text-white bg-blue-600 hover:bg-green-600 focus:ring-4 focus:ring-blue-300 rounded-lg text-sm px-4 py-2.5 focus:outline-none transition-all duration-200 flex items-center justify-center shadow-md hover:shadow-lg transform hover:scale-105 relative z-10"
                     title="Login">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                         stroke="currentColor" class="w-5 h-5 relative z-10">
@@ -166,7 +166,7 @@
                 <!-- Tombol hamburger -->
                 <button @click="mobileMenuOpen = !mobileMenuOpen" type="button"
                     class="inline-flex items-center p-2 text-sm rounded-lg lg:hidden transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-gray-200"
-                    :class="scrolled ? 'text-gray-700 hover:bg-gray-100' : 'text-gray-500 hover:bg-gray-100'"
+                    :class="scrolled ? 'text-gray-700 hover:bg-gray-300' : 'text-gray-500 hover:bg-gray-300'"
                     aria-controls="mobile-menu" :aria-expanded="mobileMenuOpen">
                     <span class="sr-only">Open main menu</span>
                     <!-- Icon hamburger -->
