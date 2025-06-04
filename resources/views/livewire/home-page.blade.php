@@ -37,8 +37,8 @@
             <div class="lg:w-1/2 flex justify-center lg:justify-end items-center">
                 <div class="w-full max-w-3xl flex items-center justify-center image-container">
                     <img src="{{ asset('images/bupatiwakil.png') }}" alt="Bupati dan Wakil Bupati Sijunjung"
-                        class="w-full h-auto max-h-[500px] object-contain animate-slide-in-right shiny-image"
-                        style="animation: slideInRight 0.8s ease-out forwards;" id="bupati-image">
+    class="w-full h-auto max-h-[500px] object-contain animate-slide-in-right shiny-navbar-style"
+    style="animation: slideInRight 0.8s ease-out forwards;" id="bupati-image">
                 </div>
             </div>
         </div>
@@ -96,41 +96,59 @@
             }
 
             .shiny-image {
-                position: relative;
-                transition: transform 0.3s ease;
+                /* legacy, can be removed if not used elsewhere */
             }
-
-            .shiny-image::before {
+            .shiny-navbar-style {
+                position: relative;
+                overflow: hidden;
+                display: block;
+            }
+            .shiny-navbar-style::before {
                 content: '';
                 position: absolute;
-                top: -100%;
+                top: 0;
                 left: -100%;
                 width: 100%;
                 height: 100%;
-                background: linear-gradient(45deg,
-                        transparent 30%,
-                        rgba(255, 255, 255, 0.3) 50%,
-                        rgba(255, 255, 255, 0.8) 60%,
-                        rgba(255, 255, 255, 0.3) 70%,
-                        transparent 80%);
-                transform: translateX(-100%) translateY(-100%) rotate(45deg);
-                transition: transform 0.8s ease-in-out;
+                background: linear-gradient(90deg, transparent, rgba(255,255,255,0.7), transparent);
+                transition: left 1.2s cubic-bezier(0.4,0,0.2,1);
+                z-index: 10;
                 pointer-events: none;
-                z-index: 1;
+            }
+            .shiny-navbar-style.auto-shine::before {
+                left: 100%;
+            }
+
+            .shiny-image::before {
+                content: "";
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 15%; /* Adjusted width for a narrower shine */
+                height: 100%;
+                background: linear-gradient(to right,
+                        rgba(255, 255, 255, 0) 0%,
+                        rgba(255, 255, 255, 0.4) 40%,
+                        rgba(255, 255, 255, 0.6) 50%,
+                        rgba(255, 255, 255, 0.4) 60%,
+                        rgba(255, 255, 255, 0) 100%);
+                transform: translateX(-100%); /* Initial position: off-screen to the left, no rotation */
+                pointer-events: none;
+                z-index: 10;
             }
 
             .shiny-image.shine::before {
+                transform: translateX(667%); /* End fully to the right (approx. 100 / 0.15 width percentage) */
                 transform: translateX(200%) translateY(200%) rotate(45deg);
             }
 
             /* Auto shine animation */
             @keyframes autoShine {
                 0% {
-                    transform: translateX(-100%) translateY(-100%) rotate(45deg);
+                    transform: translateX(-100%); /* Start fully to the left */
                 }
-
                 100% {
-                    transform: translateX(200%) translateY(200%) rotate(45deg);
+                    transform: translateX(667%); /* End fully to the right (approx. 100 / 0.15 width percentage) */
                 }
             }
 
@@ -214,19 +232,14 @@
 
                 function addShinyEffect() {
                     bupatiImage.classList.add('auto-shine');
-
-                    // Remove the class after animation completes
                     setTimeout(() => {
                         bupatiImage.classList.remove('auto-shine');
-                    }, 800);
+                    }, 1200); // match navbar duration
                 }
-
-                // Start shiny effect after initial slide-in animation completes
-                // Then repeat every 4 seconds
                 setTimeout(() => {
                     addShinyEffect();
-                    setInterval(addShinyEffect, 4000);
-                }, 2000); // Wait 2 seconds for slide-in to complete
+                    setInterval(addShinyEffect, 5000);
+                }, 2000);
             });
         </script>
     </section>

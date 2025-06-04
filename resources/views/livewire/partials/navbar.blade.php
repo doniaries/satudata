@@ -132,10 +132,10 @@
         }
     </style>
 
-    <nav class="font-roboto container mx-auto px-4 lg:px-6 py-3 lg:py-4">
+    <nav class="font-roboto container mx-auto px-4 lg:px-6 py-1 lg:py-2">
         <div class="flex flex-wrap justify-between items-center mx-auto max-w-screen-xl">
             <!-- Logo dengan efek shiny dari logo ke nama aplikasi -->
-            <a href="/" class="logo-brand-container flex items-center space-x-4 py-2 px-2 rounded-xl">
+            <a href="/" class="logo-brand-container flex items-center space-x-4 py-1 px-2 rounded-xl">
                 <div class="logo-image">
                     <img src="{{ asset('images/kabupaten-sijunjung.png') }}"
                         class="h-12 sm:h-14 lg:h-16 w-auto object-contain drop-shadow-md"
@@ -154,7 +154,7 @@
             <!-- Desktop menu dan tombol login -->
             <div class="flex items-center lg:order-2 space-x-3">
                 <a href="/admin/login"
-                    class="login-btn text-white bg-blue-600 hover:bg-green-600 focus:ring-4 focus:ring-blue-300 rounded-lg text-sm px-4 py-2.5 focus:outline-none transition-all duration-200 flex items-center justify-center shadow-md hover:shadow-lg transform hover:scale-105 relative z-10"
+                    class="login-btn text-white bg-blue-600 hover:bg-green-600 focus:ring-4 focus:ring-blue-300 rounded-lg text-sm px-4 py-1.5 focus:outline-none transition-all duration-200 flex items-center justify-center shadow-md hover:shadow-lg transform hover:scale-105 relative z-10"
                     title="Login">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                         stroke="currentColor" class="w-5 h-5 relative z-10">
@@ -192,28 +192,28 @@
                 <ul class="flex flex-row space-x-2 font-medium">
                     <li>
                         <a href="/"
-                            class="nav-link block py-2.5 px-4 rounded-lg transition-all duration-200 hover:scale-105 relative"
+                            class="nav-link block py-1.5 px-4 rounded-lg transition-all duration-200 hover:scale-105 relative"
                             :class="window.location.pathname === '/' ?
                                 'text-white bg-blue-600 hover:bg-blue-700 shadow-md' :
                                 'text-gray-700 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 hover:text-blue-700'">Beranda</a>
                     </li>
                     <li>
                         <a href="/dataset"
-                            class="nav-link block py-2.5 px-4 rounded-lg transition-all duration-200 hover:scale-105 relative"
+                            class="nav-link block py-1.5 px-4 rounded-lg transition-all duration-200 hover:scale-105 relative"
                             :class="window.location.pathname === '/dataset' ?
                                 'text-white bg-blue-600 hover:bg-blue-700 shadow-md' :
                                 'text-gray-700 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 hover:text-blue-700'">Dataset</a>
                     </li>
                     <li>
                         <a href="/organization"
-                            class="nav-link block py-2.5 px-4 rounded-lg transition-all duration-200 hover:scale-105 relative"
+                            class="nav-link block py-1.5 px-4 rounded-lg transition-all duration-200 hover:scale-105 relative"
                             :class="window.location.pathname === '/organization' ?
                                 'text-white bg-blue-600 hover:bg-blue-700 shadow-md' :
                                 'text-gray-700 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 hover:text-blue-700'">Organisasi</a>
                     </li>
                     <li>
                         <a href="/tentang"
-                            class="nav-link block py-2.5 px-4 rounded-lg transition-all duration-200 hover:scale-105 relative"
+                            class="nav-link block py-1.5 px-4 rounded-lg transition-all duration-200 hover:scale-105 relative"
                             :class="window.location.pathname === '/tentang' ?
                                 'text-white bg-blue-600 hover:bg-blue-700 shadow-md' :
                                 'text-gray-700 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 hover:text-blue-700'">Tentang</a>

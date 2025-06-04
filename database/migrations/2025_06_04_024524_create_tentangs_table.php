@@ -11,10 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('dataset_tags', function (Blueprint $table) {
-            $table->foreignId('dataset_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('tag_id')->constrained()->cascadeOnDelete();
-            $table->primary(['dataset_id', 'tag_id']);
+        Schema::create('tentangs', function (Blueprint $table) {
+            $table->id();
+            $table->string('judul');
+            $table->text('deskripsi');
+            $table->timestamps();
         });
     }
 
@@ -23,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('dataset_tags');
+        Schema::dropIfExists('tentangs');
     }
 };

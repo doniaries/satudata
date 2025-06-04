@@ -29,8 +29,9 @@ class OrganizationResource extends Resource
                 Forms\Components\TextInput::make('slug')
                     ->required()
                     ->maxLength(255),
-                Forms\Components\TextInput::make('url_logo')
-                    ->maxLength(255),
+                Forms\Components\FileUpload::make('url_logo')
+                    ->required()
+                    ->image(),
                 Forms\Components\TextInput::make('alamat')
                     ->maxLength(255),
                 Forms\Components\TextInput::make('nomor_telepon')
