@@ -40,9 +40,10 @@ class Dataset extends Component
         // Ambil tags dan jumlah datasets per tag
         $tags = \App\Models\Tag::withCount('datasets')->orderByDesc('datasets_count')->get();
 
-        // Ambil format dan jumlah resource per format
-        $formats = \App\Models\Resource::select('format')
+        // Ambil format dan jumlah dataset per format (dari tabel datasets)
+        $formats = \App\Models\Dataset::select('format')
             ->selectRaw('COUNT(*) as total')
+            ->whereNotNull('format')
             ->groupBy('format')
             ->orderByDesc('total')
             ->get();

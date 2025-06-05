@@ -8,6 +8,7 @@ class Tag extends Component
 {
     public function render()
     {
-        return view('livewire.tag');
+        $tags = \App\Models\Tag::select('id', 'name', 'slug')->paginate(6);
+        return view('livewire.tag', compact('tags'));
     }
 }
