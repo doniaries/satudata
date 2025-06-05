@@ -86,9 +86,4 @@ class Dataset extends Model
     {
         return $this->belongsToMany(Tag::class, 'dataset_tags');
     }
-
-    public function scopeWithRelations($query)
-    {
-        return $query->with(['organization', 'tags', 'resources']);
-    }
 }

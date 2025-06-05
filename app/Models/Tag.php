@@ -19,8 +19,5 @@ class Tag extends Model
         'slug',       // Kolom dari migrasi
     ];
 
-    public function datasets(): BelongsToMany
-    {
-        return $this->belongsToMany(Dataset::class, 'dataset_tags');
-    }
+
 }

@@ -13,8 +13,9 @@ class TagSeeder extends Seeder
      */
     public function run(): void
     {
-        // Tambahkan sebelum foreach jika ingin reset data
-        \DB::table('tags')->truncate();
+        // Kosongkan tabel pivot dulu agar tidak error FK
+        \DB::table('dataset_tags')->truncate();
+        \DB::table('tags')->delete();
 
         $tags = [
             'Koperasi dan UMKM',

@@ -24,7 +24,7 @@ class UserSeeder extends Seeder
                     'name' => 'Super Admin',
                     'password' => Hash::make('@Iamsuperadmin'),
                     'is_active' => true,
-                    'id_organization' => null, // Super admin tidak terikat ke organisasi tertentu
+                    'id_organization' => '10', // Super admin tidak terikat ke organisasi tertentu
                 ]
             );
 

@@ -66,6 +66,11 @@ class DatasetResource extends Resource
                     ->multiple()
                     ->preload()
                     ->required(),
+                Forms\Components\CheckboxList::make('tags')
+                    ->relationship('tags', 'name')
+                    ->columns(2)
+                    ->label('Tag Dataset')
+                    ->required(),
                 Forms\Components\TextInput::make('frekuensi_pembaruan')
                     ->maxLength(255),
                 Forms\Components\TextInput::make('dasar_rujukan_prioritas')
