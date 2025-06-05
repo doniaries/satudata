@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Route;
 // });
 
 Route::get('/', HomePage::class)->name('home');
-Route::get('/search', [SearchController::class, 'search'])->name('search');
+// Route::get('/search', [SearchController::class, 'search'])->name('search');
 Route::get('/dataset', Dataset::class)->name('dataset');
 Route::get('/organization', Organization::class)->name('organisasi');
 Route::get('/tentang', Tentang::class)->name('tentang');

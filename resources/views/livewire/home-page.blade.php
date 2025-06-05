@@ -17,9 +17,9 @@
                 <p class="text-xl lg:text-2xl mt-6 font-light max-w-2xl text-center lg:text-left">Sistem Informasi
                     Terintegrasi dan Terpadu<br>Kabupaten Sijunjung</p>
                 <div class="mt-8 md:mt-12 max-w-2xl mx-auto lg:mx-0">
-                    <form action="{{ route('search') }}" method="GET"
+                    <form action="{{ route('dataset') }}" method="GET"
                         class="flex items-center bg-white rounded-lg shadow-md overflow-hidden">
-                        <input type="text" name="q" placeholder="Cari data..."
+                        <input type="text" name="search" placeholder="Cari data..."
                             class="flex-grow px-6 py-4 focus:outline-none text-gray-700 border border-gray-300 focus:border-blue-500"
                             required>
                         <button type="submit"

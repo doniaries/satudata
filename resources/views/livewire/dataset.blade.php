@@ -3,63 +3,105 @@
         <div class="flex">
             <!-- Sidebar Organisasi, tag, format-->
             <aside class="w-64 bg-white border-r border-gray-200 p-6">
-                <h2 class="font-bold mb-4 flex items-center gap-2 text-gray-700 text-base">
-                    <!-- Heroicon: tag -->
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                        stroke="currentColor" class="size-5">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h12m-.75 4.5H21m-3.75 3.75h.008v.008h-.008v-.008Zm0 3h.008v.008h-.008v-.008Zm0 3h.008v.008h-.008v-.008Z" />
-                    </svg>
-                    Organisasi
-                </h2>
-                <ul class="space-y-2 text-sm mb-8">
-                    @foreach ($showAllOrganizations ? $organizations : $organizations->take(10) as $org)
-                        <li
-                            class="flex justify-between items-center rounded-lg p-2 transition cursor-pointer hover:bg-blue-50 hover:shadow-sm group">
-                            <span
-                                class="flex items-center gap-2 truncate group-hover:text-blue-700 transition text-gray-600"
-                                title="{{ $org->name }}">
-                                {{ $org->name }}
-                            </span>
-                            <span
-                                class="ml-2 rounded-full px-2 py-1 text-xs font-semibold {{ $org->datasets_count < 10 ? 'bg-red-100 text-red-600' : 'bg-blue-100 text-blue-600' }}">
-                                {{ $org->datasets_count }}
-                            </span>
-                        </li>
-                    @endforeach
-                </ul>
-                @if ($organizations->count() > 10)
-                    <div class="mb-6 text-xs font-semibold text-blue-600 cursor-pointer hover:text-blue-800"
-                        wire:click="$toggle('showAllOrganizations')">
-                        {{ $showAllOrganizations ? 'Show Less Organisasi' : 'Show More Organisasi' }}
+                <!-- Daftar Organisasi -->
+                <div class="mb-8">
+                    <div class="flex justify-between items-center mb-3">
+                        <h2 class="font-bold flex items-center gap-2 text-gray-700 text-base">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                stroke="currentColor" class="w-5 h-5">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.008v.008H6.75V6.75Zm2.25 0a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Zm13.5 0h-15v15h15V6.75Z" />
+                            </svg>
+                            ORGANISASI
+                        </h2>
+                        @if($selectedOrganization || $searchOrg)
+                            <button wire:click="clearFilters" 
+                                class="text-xs text-blue-600 hover:underline flex items-center gap-1">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" 
+                                    stroke="currentColor" class="w-3.5 h-3.5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                                Reset
+                            </button>
+                        @endif
                     </div>
-                @endif
+                    
+                    <!-- Pencarian Organisasi -->
+                    <div class="relative mb-3">
+                        <input type="text" 
+                            wire:model.live="searchOrg" 
+                            placeholder="Cari organisasi..." 
+                            class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500" />
+                    </div>
+                    
+                    <!-- Daftar Organisasi -->
+                    <div class="max-h-72 overflow-y-auto border border-gray-200 rounded-lg">
+                        @forelse($organizations as $org)
+                            <button 
+                                wire:click="selectOrganization({{ $org->id }})"
+                                class="w-full text-left p-3 flex justify-between items-center hover:bg-gray-50 transition-colors duration-150 {{ $selectedOrganization == $org->id ? 'bg-blue-50' : '' }}">
+                                <span class="text-sm font-medium text-gray-700 truncate pr-2">{{ $org->name }}</span>
+                                <span class="text-xs px-2 py-1 rounded-full {{ $selectedOrganization == $org->id ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-600' }}">
+                                    {{ $org->datasets_count }}
+                                </span>
+                            </button>
+                        @empty
+                            <div class="p-3 text-sm text-gray-500 text-center">Tidak ada organisasi ditemukan</div>
+                        @endforelse
+                    </div>
+                </div>
 
-                <h2 class="font-bold mb-4 flex items-center gap-2 text-gray-700 text-base">
-                    <!-- Heroicon: tag -->
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                        stroke="currentColor" class="size-5">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M9.568 3H5.25A2.25 2.25 0 0 0 3 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 0 0 5.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 0 0 9.568 3Z" />
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 6h.008v.008H6V6Z" />
-                    </svg>
-                    Tag
-                </h2>
-                <ul class="space-y-2 text-sm mb-8">
-                    @foreach ($showAllTags ? $tags : $tags->take(10) as $tag)
-                        <li class="flex justify-between items-center p-2 rounded-lg hover:bg-gray-50">
-                            <span class="truncate text-gray-600" title="{{ $tag->name }}">{{ $tag->name }}</span>
-                            <span
-                                class="ml-2 bg-gray-200 rounded-full px-2 py-1 text-xs font-semibold text-gray-700">{{ $tag->datasets_count }}</span>
-                        </li>
-                    @endforeach
-                </ul>
-                @if ($tags->count() > 10)
-                    <div class="mb-6 text-xs font-semibold text-blue-600 cursor-pointer hover:text-blue-800"
-                        wire:click="$toggle('showAllTags')">
-                        {{ $showAllTags ? 'Show Less Tag' : 'Show More Tag' }}
+                <!-- Daftar Tag -->
+                <div class="mb-8">
+                    <div class="flex justify-between items-center mb-3">
+                        <h2 class="font-bold flex items-center gap-2 text-gray-700 text-base">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                stroke="currentColor" class="w-5 h-5">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M9.568 3H5.25A2.25 2.25 0 0 0 3 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 0 0 5.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 0 0 9.568 3Z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 6h.008v.008H6V6Z" />
+                            </svg>
+                            TAG
+                        </h2>
+                        @if($selectedTag || $searchTag)
+                            <button wire:click="clearFilters" 
+                                class="text-xs text-blue-600 hover:underline flex items-center gap-1">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" 
+                                    stroke="currentColor" class="w-3.5 h-3.5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                                Reset
+                            </button>
+                        @endif
                     </div>
-                @endif
+                    
+                    <!-- Pencarian Tag -->
+                    <div class="relative mb-3">
+                        <input type="text" 
+                            wire:model.live="searchTag" 
+                            placeholder="Cari tag..." 
+                            class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500" />
+                    </div>
+                    
+                    <!-- Daftar Tag -->
+                    <div class="flex flex-wrap gap-2 max-h-60 overflow-y-auto p-1">
+                        @forelse($tags as $tag)
+                            <button 
+                                wire:click="selectTag({{ $tag->id }})"
+                                class="px-3 py-1.5 text-sm rounded-full transition-all duration-200 flex items-center gap-1.5
+                                    {{ $selectedTag == $tag->id 
+                                        ? 'bg-blue-600 text-white shadow-md' 
+                                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200' }}">
+                                <span>{{ $tag->name }}</span>
+                                <span class="text-xs px-1.5 py-0.5 rounded-full {{ $selectedTag == $tag->id ? 'bg-white/20' : 'bg-gray-200/70' }}">
+                                    {{ $tag->datasets_count }}
+                                </span>
+                            </button>
+                        @empty
+                            <div class="w-full p-2 text-sm text-gray-500 text-center">Tidak ada tag ditemukan</div>
+                        @endforelse
+                    </div>
+                </div>
 
                 <h2 class="font-bold mb-4 flex items-center gap-2 text-gray-700 text-base">
                     <!-- Heroicon: document -->
@@ -111,24 +153,35 @@
 
                     <!-- Search Box dengan Icon -->
                     <div class="relative max-w-5xl">
-                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                            <!-- Search Icon dari Heroicons -->
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
-                                stroke="currentColor" class="w-5 h-5 text-gray-400">
-                                <path stroke-linecap="round" stroke-linejoin="round"
-                                    d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
-                            </svg>
-                        </div>
-                        <input type="text" placeholder="Cari dataset"
-                            class="w-full pl-12 pr-4 py-4 text-gray-700 bg-white border-0 rounded-xl shadow-lg focus:outline-none focus:ring-4 focus:ring-white/30 focus:shadow-xl transition-all duration-300 text-lg placeholder-gray-500" />
-                        <div class="absolute inset-y-0 right-0 pr-4 flex items-center">
-                            <!-- Filter Icon dari Heroicons (optional) -->
-                            <button class="p-2 text-gray-400 hover:text-gray-600 transition-colors duration-200">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                    stroke-width="2" stroke="currentColor" class="w-5 h-5">
+                        <div class="relative flex items-center">
+                            <input type="text" 
+                                placeholder="Cari dataset..." 
+                                wire:model.live="search"
+                                class="w-full pl-4 pr-12 py-3 text-gray-700 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 text-base placeholder-gray-400" />
+                            
+                            <!-- Tombol Reset (X) -->
+                            @if($search)
+                                <button 
+                                    type="button"
+                                    wire:click="$set('search', '')"
+                                    class="absolute right-16 mr-1 p-2 bg-red-100 text-red-600 rounded-lg hover:bg-red-200 active:bg-red-300 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-opacity-50 transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-sm">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                    <span class="sr-only">Hapus pencarian</span>
+                                </button>
+                            @endif
+                            
+                            <!-- Tombol Search -->
+                            <button 
+                                type="submit"
+                                class="absolute right-2 p-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 active:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50 transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-md">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+                                    stroke="currentColor" class="w-6 h-6">
                                     <path stroke-linecap="round" stroke-linejoin="round"
-                                        d="M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 0 1-.659 1.591l-5.432 5.432a2.25 2.25 0 0 0-.659 1.591v2.927a2.25 2.25 0 0 1-1.244 2.013L9.75 21v-6.568a2.25 2.25 0 0 0-.659-1.591L3.659 7.409A2.25 2.25 0 0 1 3 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0 1 12 3Z" />
+                                        d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
                                 </svg>
+                                <span class="sr-only">Cari</span>
                             </button>
                         </div>
                     </div>
@@ -154,7 +207,7 @@
                     <div class="space-y-4">
                         @forelse ($datasets as $dataset)
                             <div
-                                class="flex items-start gap-4 p-4 border border-gray-200 rounded-lg hover:shadow-md transition-shadow">
+                                class="flex items-start gap-4 p-5 border border-gray-200 rounded-lg hover:shadow-md transition-all duration-200 bg-white">
                                 <!-- Excel Icon -->
                                 <div class="flex-shrink-0">
                                     <div class="w-10 h-12 bg-green-600 rounded flex items-center justify-center">
@@ -226,7 +279,7 @@
                                                     viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
                                                     class="w-4 h-4">
                                                     <path stroke-linecap="round" stroke-linejoin="round"
-                                                        d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
+                                                        d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 1 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
                                                 </svg>
                                                 {{ $dataset->frekuensi_pembaruan }}
                                             </span>
