@@ -7,7 +7,13 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\SoftDeletes; // Untuk fitur soft delete
+use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Models\Organization;
+use App\Models\Tag;
+use App\Models\Resource;
+use App\Models\Satuan;
+use App\Models\Ukuran;
+use App\Models\User;
 
 class Dataset extends Model
 {
@@ -19,12 +25,12 @@ class Dataset extends Model
 
 
     protected $fillable = [
-        'id_organisasi',
+        'id_organization',
         'judul',
         'slug',
         'deskripsi_dataset',
-        'satuan',
-        'ukuran',
+        'satuan_id',
+        'ukuran_id',
         'frekuensi_pembaruan',
         'dasar_rujukan_prioritas',
         'lisensi',
@@ -43,45 +49,64 @@ class Dataset extends Model
     ];
 
     protected $casts = [
-        'tanggal_rilis' => 'date', // Kolom `tanggal_rilis` bertipe date
-        'tanggal_modifikasi_metadata' => 'date', // Kolom `tanggal_modifikasi_metadata` bertipe date
-        'is_publik' => 'boolean', // Kolom `is_publik` bertipe boolean
-        'metadata_tambahan' => 'array', // Kolom `metadata_tambahan` bertipe json
-        'jumlah_dilihat' => 'integer', // Kolom `jumlah_dilihat` bertipe unsignedInteger
-
+        'tanggal_rilis' => 'date',
+        'tanggal_modifikasi_metadata' => 'date',
+        'is_publik' => 'boolean',
+        'metadata_tambahan' => 'array',
+        'jumlah_dilihat' => 'integer',
     ];
 
+    /**
+     * Get the organization that owns the dataset.
+     */
     public function organization(): BelongsTo
     {
         return $this->belongsTo(Organization::class, 'id_organization', 'id');
     }
 
-    public function resources(): HasMany
-    {
-        return $this->hasMany(Resource::class);
-    }
+    /**
+     * Get all resources for the dataset.
+     */
+    // public function resources(): HasMany
+    // {
+    //     return $this->hasMany(Resource::class);
+    // }
 
-
-    public function createdBy()
+    /**
+     * Get the user who created the dataset.
+     */
+    public function createdBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by_user_id');
     }
 
-    public function updatedBy()
+    /**
+     * Get the user who last updated the dataset.
+     */
+    public function updatedBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'updated_by_user_id');
     }
 
-    public function satuans()
+    /**
+     * Get the satuan for the dataset.
+     */
+    public function satuan()
     {
-        return $this->belongsToMany(Satuan::class, 'satuans', 'dataset_id', 'satuan_id');
+        return $this->belongsTo(Satuan::class, 'satuan_id');
     }
 
-    public function ukurans()
+    /**
+     * Get the ukuran for the dataset.
+     */
+    public function ukuran()
     {
-        return $this->belongsToMany(Ukuran::class, 'ukurans', 'dataset_id', 'ukuran_id');
+        return $this->belongsTo(Ukuran::class, 'ukuran_id');
     }
 
+    /**
+     * The tags that belong to the dataset.
+     */
     public function tags(): BelongsToMany
     {
         return $this->belongsToMany(Tag::class, 'dataset_tags');

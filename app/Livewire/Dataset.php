@@ -7,6 +7,8 @@ use Livewire\WithPagination;
 
 use App\Models\Dataset as DatasetModel;
 use App\Models\Organization;
+use App\Models\Tag;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Request;
 
 class Dataset extends Component
@@ -21,54 +23,57 @@ class Dataset extends Component
         $this->resetPage();
     }
 
-    public function selectOrganization($organizationId)
-    {
-        $this->selectedOrganization = $organizationId;
-        $this->resetPage();
-    }
-
-    public function selectTag($tagId)
-    {
-        $this->selectedTag = $tagId;
-        $this->resetPage();
-    }
-
+    /**
+     * Clear all filters and reset to default state
+     */
     public function clearFilters()
     {
-        $this->reset(['search', 'selectedOrganization', 'selectedTag']);
+        $this->reset(['search', 'organization', 'tag']);
         $this->resetPage();
+        
+        // Redirect ke halaman dataset tanpa parameter
+        return redirect()->route('datasets.index');
     }
 
-    // Properti untuk pencarian dan filter
+    /**
+     * Properti untuk pencarian dan filter
+     */
     public $search = '';
-    public $searchOrg = '';
-    public $searchTag = '';
     public $orderBy = 'relevansi';
-    public $showAllOrganizations = false;
-    public $showAllTags = false;
+    public $organization = null;
+    public $tag = null;
+    public $organizations = [];
+    public $tags = [];
+    public $totalDatasets = 0;
     public $showAllFormats = false;
-    public $selectedOrganization = null;
-    public $selectedTag = null;
+    protected $queryString = ['search', 'orderBy', 'organization', 'tag'];
+    
+    /**
+     * Mount the component with optional organization and tag parameters
+     */
+    public function mount($organization = null, $tag = null)
+    {
+        $this->organization = $organization;
+        $this->tag = $tag;
+        $this->showAllFormats = false; // Default value
+    }
+    
+    public function toggleShowAllFormats()
+    {
+        $this->showAllFormats = !$this->showAllFormats;
+    }
 
     public function render()
     {
-        // Ambil organisasi dengan filter pencarian
-        $organizationsQuery = Organization::withCount('datasets');
-        
-        if ($this->searchOrg) {
-            $organizationsQuery->where('name', 'like', '%' . $this->searchOrg . '%');
-        }
-        
-        $organizations = $organizationsQuery->orderByDesc('datasets_count')->get();
-        
-        // Ambil tag dengan filter pencarian
-        $tagsQuery = \App\Models\Tag::withCount('datasets');
-        
-        if ($this->searchTag) {
-            $tagsQuery->where('name', 'like', '%' . $this->searchTag . '%');
-        }
-        
-        $tags = $tagsQuery->orderByDesc('datasets_count')->get();
+        // Ambil semua organisasi dengan jumlah dataset
+        $this->organizations = Organization::withCount('datasets')
+            ->orderByDesc('datasets_count')
+            ->get();
+            
+        // Ambil semua tag dengan jumlah dataset
+        $this->tags = Tag::withCount('datasets')
+            ->orderByDesc('datasets_count')
+            ->get();
 
         // Query dataset
         $query = DatasetModel::with(['organization', 'tags'])
@@ -87,46 +92,45 @@ class Dataset extends Component
         }
 
         // Filter berdasarkan organisasi yang dipilih
-        if ($this->selectedOrganization) {
+        if ($this->organization) {
             $query->whereHas('organization', function($q) {
-                $q->where('id', $this->selectedOrganization);
+                $q->where('slug', $this->organization);
             });
         }
 
         // Filter berdasarkan tag yang dipilih
-        if ($this->selectedTag) {
+        if ($this->tag) {
             $query->whereHas('tags', function($q) {
-                $q->where('tags.id', $this->selectedTag);
+                $q->where('slug', $this->tag);
             });
         }
-        // Sorting sederhana (bisa dikembangkan)
+
+        // Sorting
         if ($this->orderBy === 'relevansi') {
             $query->orderByDesc('jumlah_dilihat');
         } else {
             $query->orderByDesc('created_at');
         }
-        $totalDatasets = (clone $query)->count();
+        
+        $this->totalDatasets = (clone $query)->count();
         $datasets = $query->paginate(10);
 
-        // Ambil tags dan jumlah datasets per tag
-        $tags = \App\Models\Tag::withCount('datasets')->orderByDesc('datasets_count')->get();
-
-        // Ambil format dan jumlah dataset per format (dari tabel datasets)
-        $formats = \App\Models\Dataset::select('format')
-            ->selectRaw('COUNT(*) as total')
+        // Ambil format file yang tersedia langsung dari kolom format di tabel datasets
+        $formats = DatasetModel::select('format', DB::raw('COUNT(*) as total'))
             ->whereNotNull('format')
             ->groupBy('format')
-            ->orderByDesc('total')
+            ->orderBy('format')
             ->get();
 
         return view('livewire.dataset', [
-            'organizations' => $organizations,
             'datasets' => $datasets,
-            'totalDatasets' => $totalDatasets,
+            'totalDatasets' => $this->totalDatasets,
+            'organizations' => $this->organizations,
+            'tags' => $this->tags,
+            'formats' => $formats,
+            'showAllFormats' => $this->showAllFormats,
             'search' => $this->search,
             'orderBy' => $this->orderBy,
-            'tags' => $tags,
-            'formats' => $formats,
         ]);
     }
 }

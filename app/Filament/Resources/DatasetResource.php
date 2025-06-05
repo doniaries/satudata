@@ -14,6 +14,8 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Auth;
 
+use function Livewire\wrap;
+
 class DatasetResource extends Resource
 {
     protected static ?string $model = Dataset::class;
@@ -40,30 +42,19 @@ class DatasetResource extends Resource
                 Forms\Components\Textarea::make('deskripsi_dataset')
                     ->required()
                     ->columnSpanFull(),
-                Forms\Components\Select::make('satuan')
-                    ->relationship(
-                        name: 'satuan',
-                        titleAttribute: 'nama_satuan',
-                        modifyQueryUsing: fn(Builder $query) => $query
-                            ->select(['id', 'nama_satuan'])
-                            ->orderBy('nama_satuan')
-                            ->limit(100)
-                    )
+                // Field satuan
+                Forms\Components\Select::make('satuan_id')
+                    ->label('Satuan')
+                    ->relationship('satuan', 'nama_satuan')
                     ->searchable()
-                    ->multiple()
                     ->preload()
                     ->required(),
-                Forms\Components\Select::make('ukuran')
-                    ->relationship(
-                        name: 'ukuran',
-                        titleAttribute: 'nama_ukuran',
-                        modifyQueryUsing: fn(Builder $query) => $query
-                            ->select(['id', 'nama_ukuran'])
-                            ->orderBy('nama_ukuran')
-                            ->limit(100)
-                    )
+                    
+                // Field ukuran
+                Forms\Components\Select::make('ukuran_id')
+                    ->label('Ukuran')
+                    ->relationship('ukuran', 'nama_ukuran')
                     ->searchable()
-                    ->multiple()
                     ->preload()
                     ->required(),
                 Forms\Components\CheckboxList::make('tags')
@@ -138,17 +129,24 @@ class DatasetResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('organization.name')
-                    // ->numeric()
+                    ->label('Organisasi')
+                    ->wrap()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('judul')
+                    ->label('Judul')
+                    ->wrap()
                     ->searchable(),
-                Tables\Columns\TextColumn::make('slug')
-                    ->searchable(),
+                // Tables\Columns\TextColumn::make('slug')
+                //     ->searchable(),
                 Tables\Columns\TextColumn::make('satuan')
+                    ->label('Satuan')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('frekuensi_pembaruan')
+                    ->label('Pembaruan')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('dasar_rujukan_prioritas')
+                    ->label('Dasar Rujukan Prioritas')
+                    ->wrap()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('lisensi')
                     ->searchable(),
@@ -157,16 +155,19 @@ class DatasetResource extends Resource
                 Tables\Columns\TextColumn::make('email_penulis_kontak')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('pemelihara_data')
+                    ->wrap()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('email_pemelihara_data')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('sumber_data')
+                    ->wrap()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('tanggal_rilis')
                     ->date()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('tanggal_modifikasi_metadata')
                     ->date()
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->sortable(),
                 Tables\Columns\TextColumn::make('cakupan_waktu_mulai')
                     ->searchable(),
@@ -180,13 +181,19 @@ class DatasetResource extends Resource
                 Tables\Columns\TextColumn::make('kepatuhan_standar_data')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('url_kamus_data')
+                    ->label('Kamus Data')
+                    ->wrap()
                     ->searchable(),
-                Tables\Columns\TextColumn::make('created_by_user_id')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('updated_by_user_id')
-                    ->numeric()
-                    ->sortable(),
+                Tables\Columns\TextColumn::make('createdBy.name')
+                    ->label('Dibuat oleh')
+                    ->sortable()
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('updatedBy.name')
+                    ->label('Diedit oleh')
+                    ->sortable()
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
