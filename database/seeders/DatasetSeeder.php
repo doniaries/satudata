@@ -3,10 +3,14 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use App\Models\Dataset; // Pastikan namespace Model Dataset sudah benar
+use App\Models\Dataset;
+use App\Models\Tag;
 use Illuminate\Support\Str;
-use App\Models\Organization; // Digunakan untuk mendapatkan id_organization
-use App\Models\User; // Digunakan untuk mendapatkan created_by_user_id dan updated_by_user_id
+use App\Models\Organization;
+use App\Models\User;
+use Illuminate\Support\Facades\DB;
+use App\Models\Satuan;
+use App\Models\Ukuran;
 
 class DatasetSeeder extends Seeder
 {
@@ -15,86 +19,53 @@ class DatasetSeeder extends Seeder
      */
     public function run(): void
     {
-        // Ambil ID organisasi Dinas Komunikasi dan Informatika
-        $kominfoOrg = Organization::where('slug', 'dinas-komunikasi-dan-informatika')->first();
-        if (!$kominfoOrg) {
-            $this->command->error('Organisasi Dinas Komunikasi dan Informatika tidak ditemukan.');
-            return;
-        }
+        // Hapus data terkait agar seed ulang tidak error FK
+        \DB::table('datasets')->delete();
 
-        // Ambil ID organisasi Dinas Kependudukan Dan Pencatatan Sipil
-        $dukcapilOrg = Organization::where('slug', 'dinas-kependudukan-dan-pencatatan-sipil')->first();
-        if (!$dukcapilOrg) {
-            $this->command->error('Organisasi Dinas Kependudukan Dan Pencatatan Sipil tidak ditemukan.');
-            return;
-        }
+        // Ambil semua organisasi
+        $organizations = \App\Models\Organization::all();
+        $allTags = \App\Models\Tag::pluck('id')->toArray();
+        $allSatuan = \App\Models\Satuan::pluck('id')->toArray();
+        $allUkuran = \App\Models\Ukuran::pluck('id')->toArray();
+        $userId = \App\Models\User::inRandomOrder()->value('id');
 
-        // Ambil ID user pertama sebagai contoh, atau sesuaikan dengan kebutuhan Anda
-        $user = User::first();
-        if (!$user) {
-            $this->command->error('Tidak ada User ditemukan. Jalankan UserSeeder terlebih dahulu.');
-            return;
-        }
-
-        $datasets = [
-            [
-                'id_organization' => $dukcapilOrg->id, // Produsen Data: Dinas Kependudukan Dan Pencatatan Sipil
-                'judul' => 'Jumlah Penduduk Kabupaten Sijunjung 2022',
-                'deskripsi_dataset' => 'Data jumlah penduduk per kecamatan di Kabupaten Sijunjung pada tahun 2022.',
-                'satuan' => 'Orang',
+        foreach ($organizations as $org) {
+            $judul = 'Data ' . $org->name . ' Tahun ' . now()->year;
+            $dataset = \App\Models\Dataset::create([
+                'id_organization' => $org->id,
+                'judul' => $judul,
+                'slug' => \Str::slug($judul . '-' . uniqid()),
+                'deskripsi_dataset' => 'Data ini berisi informasi dari organisasi ' . $org->name . '.',
                 'frekuensi_pembaruan' => 'Tahunan',
-                'dasar_rujukan_prioritas' => 'RPJMD Kabupaten Sijunjung 2021-2026',
-                'lisensi' => 'Creative Commons Attribution 4.0 International (CC BY 4.0)',
-                'penulis_kontak' => 'Analis Data Kependudukan',
-                'email_penulis_kontak' => 'analis.kependudukan@sijunjung.go.id',
-                'pemelihara_data' => 'Dinas Kependudukan dan Pencatatan Sipil Kabupaten Sijunjung',
-                'email_pemelihara_data' => 'dukcapil@sijunjung.go.id',
-                'sumber_data' => 'BPS Kabupaten Sijunjung, Dinas Kependudukan dan Pencatatan Sipil Kabupaten Sijunjung',
-                'tanggal_rilis' => '2023-02-01',
-                'tanggal_modifikasi_metadata' => '2023-03-15',
-                'cakupan_waktu_mulai' => '2022-01-01',
-                'cakupan_waktu_selesai' => '2022-12-31',
+                'dasar_rujukan_prioritas' => 'RPJMD Kabupaten Sijunjung 2020-2025',
+                'lisensi' => 'Open Data',
+                'penulis_kontak' => 'Admin ' . $org->name,
+                'email_penulis_kontak' => $org->email_organisasi ?? 'admin@' . ($org->slug ?? \Str::slug($org->name)) . '.go.id',
+                'pemelihara_data' => $org->name,
+                'email_pemelihara_data' => $org->email_organisasi ?? 'admin@' . ($org->slug ?? \Str::slug($org->name)) . '.go.id',
+                'sumber_data' => $org->name,
+                'tanggal_rilis' => now()->subYears(rand(1, 5)),
+                'tanggal_modifikasi_metadata' => now(),
                 'is_publik' => true,
-                'jumlah_dilihat' => 150,
-                'metadata_tambahan' => json_encode(['catatan_metodologi' => 'Pengumpulan data dilakukan melalui survei dan data administrasi.']),
-                'kepatuhan_standar_data' => 'Standar Data Statistik Nasional',
-                'url_kamus_data' => 'https://sijunjung.go.id/kamus_data/penduduk_2022',
-                'created_by_user_id' => $user->id,
-                'updated_by_user_id' => $user->id,
-            ],
-            [
-                'id_organization' => $kominfoOrg->id, // Produsen Data: Dinas Komunikasi dan Informatika
-                'judul' => 'Sijunjung Dalam Angka 2023',
-                'deskripsi_dataset' => 'Dataset mengenai data statistik Kabupaten Sijunjung tahun 2023.',
-                'satuan' => 'Data',
-                'frekuensi_pembaruan' => 'Tahunan',
-                'dasar_rujukan_prioritas' => 'Rencana Pembangunan Jangka Menengah Daerah (RPJMD)',
-                'lisensi' => 'Open Government Licence',
-                'penulis_kontak' => 'Tim Statistik Daerah',
-                'email_penulis_kontak' => 'statistik@sijunjung.go.id',
-                'pemelihara_data' => 'Dinas Komunikasi dan Informatika Kabupaten Sijunjung',
-                'email_pemelihara_data' => 'diskominfo@sijunjung.go.id',
-                'sumber_data' => 'Berbagai OPD di Kabupaten Sijunjung',
-                'tanggal_rilis' => '2024-01-20',
-                'tanggal_modifikasi_metadata' => '2024-02-01',
-                'cakupan_waktu_mulai' => '2023-01-01',
-                'cakupan_waktu_selesai' => '2023-12-31',
-                'is_publik' => true,
-                'jumlah_dilihat' => 300,
-                'metadata_tambahan' => json_encode(['cakupan_geografis' => 'Kabupaten Sijunjung']),
-                'kepatuhan_standar_data' => 'Standar Data Indonesia',
-                'url_kamus_data' => 'https://sijunjung.go.id/kamus_data/sijunjung_dalam_angka_2023',
-                'created_by_user_id' => $user->id,
-                'updated_by_user_id' => $user->id,
-            ],
-            // Tambahkan dataset lain di sini sesuai kebutuhan
-        ];
-
-        foreach ($datasets as $datasetData) {
-            $datasetData['slug'] = Str::slug($datasetData['judul']);
-            Dataset::create($datasetData);
+                'metadata_tambahan' => json_encode(['catatan' => 'Contoh dataset organisasi ' . $org->name]),
+                'url_kamus_data' => 'https://sijunjung.go.id/kamus_data/' . \Str::slug($judul),
+                'created_by_user_id' => $userId,
+                'updated_by_user_id' => $userId,
+                // Kolom resource
+                'nama_resource' => 'Resource ' . $org->name,
+                'deskripsi_resource' => 'File utama data ' . $org->name,
+                'file_path' => 'storage/data/' . \Str::slug($judul) . '.csv',
+                'format' => 'CSV',
+                'ukuran_file' => rand(10000, 500000),
+                'terakhir_diubah' => now()->subDays(rand(0, 30)),
+                'jumlah_diunduh' => rand(0, 100),
+                'satuan_id' => $allSatuan ? collect($allSatuan)->random() : null,
+                'ukuran_id' => $allUkuran ? collect($allUkuran)->random() : null,
+            ]);
+            // Jika ingin tetap assign tags, bisa gunakan relasi tags jika masih ada
+            if ($allTags && method_exists($dataset, 'tags')) {
+                $dataset->tags()->sync(collect($allTags)->random(rand(1, min(3, count($allTags))))->all());
+            }
         }
-
-        $this->command->info(count($datasets) . ' datasets berhasil ditambahkan.');
     }
 }

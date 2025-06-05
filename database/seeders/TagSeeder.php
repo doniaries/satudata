@@ -13,6 +13,9 @@ class TagSeeder extends Seeder
      */
     public function run(): void
     {
+        // Tambahkan sebelum foreach jika ingin reset data
+        \DB::table('tags')->truncate();
+
         $tags = [
             'Koperasi dan UMKM',
             'Kependudukan & Ketenagakerjaan',
@@ -20,11 +23,10 @@ class TagSeeder extends Seeder
             'Perairan',
             'Pelayanan Publik',
             'Ekonomi Industri',
-            'Transportasi dan Komunikasi',
+            'Teknologi dan Komunikasi',
             'Sosial dan Kesejahteraan Rakyat',
             'Pariwisata',
             'Jalan & Tata Ruang',
-            'Pengawasan',
             'Pertanian, Peternakan dan Perikanan',
             'Penanggulangan Bencana',
             'Kebakaran & Penyelamatan', // Disesuaikan dari "Kebakaran & penyelamatan"

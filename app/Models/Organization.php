@@ -39,10 +39,13 @@ class Organization extends Model
     {
         return $this->hasMany(Dataset::class, 'id_organization', 'id');
     }
-
-
     public function users(): HasMany
     {
         return $this->hasMany(User::class);
+    }
+
+    public function scopeWithRelations($query)
+    {
+        return $query->with(['datasets', 'users']);
     }
 }

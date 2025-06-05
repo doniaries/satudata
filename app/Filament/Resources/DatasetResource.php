@@ -28,34 +28,9 @@ class DatasetResource extends Resource
 
         return $form
             ->schema([
-                Forms\Components\Select::make('id_organization')
-                    ->label('Organisasi Produsen Data') // Label untuk field
-                    ->relationship('organization', 'name') // Relasi ke model Organization, menampilkan kolom 'name'
-                    ->searchable() // Memungkinkan pencarian pada opsi select
-                    ->preload() // Memuat opsi saat halaman dimuat
-                    ->required() // Field ini wajib diisi
-                    // Logika untuk menentukan apakah field bisa diedit atau tidak
-                    ->disabled(function () use ($isSuperAdmin, $isAdminSatuData) {
-                        // Jika bukan super_admin ATAU admin_satudata, maka field di-disable
-                        return !$isSuperAdmin && !$isAdminSatuData;
-                    })
-                    // Logika untuk menentukan nilai default
-                    ->default(function () use ($user, $isSuperAdmin, $isAdminSatuData) {
-                        // Jika user adalah super_admin atau admin_satudata, mereka bisa memilih, jadi tidak ada default spesifik di sini
-                        // kecuali Anda ingin menentukan default lain untuk mereka (misalnya organisasi pertama).
-                        // Untuk user biasa, defaultnya adalah organisasi mereka.
-                        if (!$isSuperAdmin && !$isAdminSatuData) {
-                            return $user?->id_organization; // Mengambil id_organization dari user yang login
-                        }
-                        return null; // Tidak ada default untuk admin, biarkan mereka memilih
-                    }),
-
-                // ->helperText(function () use ($isSuperAdmin, $isAdminSatuData) {
-                //     if (!$isSuperAdmin && !$isAdminSatuData) {
-                //         return 'Organisasi otomatis diisi berdasarkan akun Anda.';
-                //     }
-                //     return 'Pilih organisasi produsen data.';
-                // }),
+                Forms\Components\Hidden::make('id_organization')
+                    ->default(fn() => auth()->user()->organization_id)
+                    ->dehydrated(),
                 Forms\Components\TextInput::make('judul')
                     ->required()
                     ->maxLength(255),
@@ -65,8 +40,32 @@ class DatasetResource extends Resource
                 Forms\Components\Textarea::make('deskripsi_dataset')
                     ->required()
                     ->columnSpanFull(),
-                Forms\Components\TextInput::make('satuan')
-                    ->maxLength(255),
+                Forms\Components\Select::make('satuan')
+                    ->relationship(
+                        name: 'satuan',
+                        titleAttribute: 'nama_satuan',
+                        modifyQueryUsing: fn(Builder $query) => $query
+                            ->select(['id', 'nama_satuan'])
+                            ->orderBy('nama_satuan')
+                            ->limit(100)
+                    )
+                    ->searchable()
+                    ->multiple()
+                    ->preload()
+                    ->required(),
+                Forms\Components\Select::make('ukuran')
+                    ->relationship(
+                        name: 'ukuran',
+                        titleAttribute: 'nama_ukuran',
+                        modifyQueryUsing: fn(Builder $query) => $query
+                            ->select(['id', 'nama_ukuran'])
+                            ->orderBy('nama_ukuran')
+                            ->limit(100)
+                    )
+                    ->searchable()
+                    ->multiple()
+                    ->preload()
+                    ->required(),
                 Forms\Components\TextInput::make('frekuensi_pembaruan')
                     ->maxLength(255),
                 Forms\Components\TextInput::make('dasar_rujukan_prioritas')
@@ -78,34 +77,54 @@ class DatasetResource extends Resource
                 Forms\Components\TextInput::make('email_penulis_kontak')
                     ->email()
                     ->maxLength(255),
+                Forms\Components\Placeholder::make('created_by_name')
+                    ->label('Dibuat oleh')
+                    ->content(fn($record) => $record?->createdBy?->name ?? '-'),
+                Forms\Components\Placeholder::make('updated_by_name')
+                    ->label('Diedit oleh')
+                    ->content(fn($record) => $record?->updatedBy?->name ?? '-'),
                 Forms\Components\TextInput::make('pemelihara_data')
-                    ->maxLength(255),
+                    ->label('Pemelihara Data (Organisasi)')
+                    ->default(fn() => auth()->user()?->organization?->name)
+                    ->disabled(), // or ->readonly()
                 Forms\Components\TextInput::make('email_pemelihara_data')
                     ->email()
-                    ->maxLength(255),
+                    ->default(fn() => auth()->user()?->organization?->email)
+                    ->disabled(), // or ->readonly()
                 Forms\Components\TextInput::make('sumber_data')
                     ->maxLength(255),
-                Forms\Components\DatePicker::make('tanggal_rilis'),
-                Forms\Components\DatePicker::make('tanggal_modifikasi_metadata'),
-                Forms\Components\TextInput::make('cakupan_waktu_mulai')
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('cakupan_waktu_selesai')
-                    ->maxLength(255),
-                Forms\Components\Toggle::make('is_publik')
-                    ->required(),
-                Forms\Components\TextInput::make('jumlah_dilihat')
-                    ->required()
-                    ->numeric()
-                    ->default(0),
+                Forms\Components\DatePicker::make('tanggal_rilis')
+                    ->native(false)
+                    ->default(now())
+                    ->displayFormat('d F Y'),
+                Forms\Components\DatePicker::make('tanggal_modifikasi_metadata')
+                    ->native(false)
+                    ->default(now())
+                    ->displayFormat('d F Y'),
+                // Forms\Components\TextInput::make('cakupan_waktu_mulai')
+                //     ->maxLength(255),
+                // Forms\Components\TextInput::make('cakupan_waktu_selesai')
+                //     ->maxLength(255),
+
+                // Forms\Components\TextInput::make('jumlah_dilihat')
+                //     ->required()
+                //     ->numeric()
+                //     ->default(0),
                 Forms\Components\TextInput::make('metadata_tambahan'),
                 Forms\Components\TextInput::make('kepatuhan_standar_data')
                     ->maxLength(255),
                 Forms\Components\TextInput::make('url_kamus_data')
                     ->maxLength(255),
-                Forms\Components\TextInput::make('created_by_user_id')
-                    ->numeric(),
-                Forms\Components\TextInput::make('updated_by_user_id')
-                    ->numeric(),
+                Forms\Components\Placeholder::make('created_by_name')
+                    ->label('Dibuat oleh')
+                    ->content(fn($record) => $record?->createdBy?->name ?? '-'),
+
+                Forms\Components\Placeholder::make('updated_by_name')
+                    ->label('Diedit oleh')
+                    ->content(fn($record) => $record?->updatedBy?->name ?? '-'),
+                Forms\Components\Toggle::make('is_publik')
+                    ->required(),
+
             ]);
     }
 

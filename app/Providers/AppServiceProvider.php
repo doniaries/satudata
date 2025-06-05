@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use Carbon\Carbon;
 use Filament\Facades\Filament;
 use Illuminate\Support\ServiceProvider;
 
@@ -20,6 +21,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+
+        Carbon::setLocale('id');
+        setlocale(LC_TIME, 'id_ID.UTF-8');
         Filament::serving(function () {
             app()->setLocale('id');
         });

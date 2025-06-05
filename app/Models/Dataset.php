@@ -24,6 +24,7 @@ class Dataset extends Model
         'slug',
         'deskripsi_dataset',
         'satuan',
+        'ukuran',
         'frekuensi_pembaruan',
         'dasar_rujukan_prioritas',
         'lisensi',
@@ -34,12 +35,8 @@ class Dataset extends Model
         'sumber_data',
         'tanggal_rilis',
         'tanggal_modifikasi_metadata',
-        'cakupan_waktu_mulai',
-        'cakupan_waktu_selesai',
         'is_publik',
-        'jumlah_dilihat',
         'metadata_tambahan',
-        'kepatuhan_standar_data',
         'url_kamus_data',
         'created_by_user_id',
         'updated_by_user_id',
@@ -75,6 +72,15 @@ class Dataset extends Model
         return $this->belongsTo(User::class, 'updated_by_user_id');
     }
 
+    public function satuans()
+    {
+        return $this->belongsToMany(Satuan::class, 'satuans', 'dataset_id', 'satuan_id');
+    }
+
+    public function ukurans()
+    {
+        return $this->belongsToMany(Ukuran::class, 'ukurans', 'dataset_id', 'ukuran_id');
+    }
 
     public function tags(): BelongsToMany
     {
