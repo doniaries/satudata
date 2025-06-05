@@ -24,6 +24,7 @@ class DatabaseSeeder extends Seeder
             UkuranSeeder::class,
             DatasetSeeder::class,
             DatasetTagSeeder::class,
+            TentangSeeder::class,
         ]);
     }
 }
