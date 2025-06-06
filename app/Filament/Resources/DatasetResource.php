@@ -31,205 +31,219 @@ class DatasetResource extends Resource
 
         return $form
             ->schema([
-                Forms\Components\Hidden::make('id_organization')
-                    ->default(fn() => auth()->user()->organization_id)
-                    ->dehydrated(),
-                Forms\Components\TextInput::make('judul')
-                    ->required()
-                    ->live(onBlur: true)
-                    ->afterStateUpdated(function ($state, callable $set) {
-                        $set('slug', Str::slug($state));
-                    })
-                    ->maxLength(255),
-                Forms\Components\Hidden::make('slug')
-                    ->disabled()
-                    ->dehydrated(),
-                Forms\Components\Textarea::make('deskripsi_dataset')
-                    ->required()
-                    ->columnSpanFull(),
-                // Field satuan
-                Forms\Components\Select::make('satuan_id')
-                    ->label('Satuan')
-                    ->options(fn() => \App\Models\Satuan::pluck('nama_satuan', 'id'))
-                    ->createOptionForm([
-                        Forms\Components\TextInput::make('nama_satuan')
-                            ->label('Nama Satuan')
-                            ->required()
-                            ->maxLength(255)
-                            ->unique('satuans', 'nama_satuan')
-                            ->columnSpanFull(),
+                Forms\Components\Grid::make()
+                    ->schema([
+                        // Left Column - User Input Fields
+                        Forms\Components\Grid::make(1)
+                            ->schema([
+                                Forms\Components\Section::make('Informasi Dataset')
+                                    ->schema([
+                                        // Main dataset fields
+                                        Forms\Components\TextInput::make('judul')
+                                            ->required()
+                                            ->maxLength(255)
+                                            ->live(onBlur: true)
+                                            ->afterStateUpdated(fn(string $operation, $state, callable $set) => $operation === 'create' ? $set('slug', Str::slug($state)) : null),
+
+                                        Forms\Components\TextInput::make('slug')
+                                            ->disabled()
+                                            ->dehydrated()
+                                            ->required()
+                                            ->maxLength(255)
+                                            ->unique(Dataset::class, 'slug', ignoreRecord: true),
+
+                                        Forms\Components\Textarea::make('deskripsi_dataset')
+                                            ->label('Deskripsi Dataset')
+                                            ->required()
+                                            ->columnSpanFull(),
+
+                                        // Satuan with pluck for better performance
+                                        Forms\Components\Select::make('satuan_id')
+                                            ->label('Satuan')
+                                            ->options(fn() => \App\Models\Satuan::pluck('nama_satuan', 'id'))
+                                            ->createOptionForm([
+                                                Forms\Components\TextInput::make('nama_satuan')
+                                                    ->label('Nama Satuan')
+                                                    ->required()
+                                                    ->maxLength(255)
+                                                    ->unique('satuans', 'nama_satuan')
+                                                    ->columnSpanFull(),
+                                            ])
+                                            ->createOptionAction(
+                                                fn(Forms\Components\Actions\Action $action) => $action
+                                                    ->modalHeading('Tambah Satuan Baru')
+                                                    ->modalDescription('Masukkan nama satuan baru')
+                                                    ->modalSubmitActionLabel('Simpan')
+                                                    ->modalWidth('sm')
+                                            )
+                                            ->createOptionUsing(function (array $data) {
+                                                $existingSatuan = \App\Models\Satuan::where('nama_satuan', $data['nama_satuan'])->first();
+                                                if ($existingSatuan) {
+                                                    return $existingSatuan->id;
+                                                }
+                                                return \App\Models\Satuan::create($data)->id;
+                                            })
+                                            ->searchable()
+                                            ->preload()
+                                            ->required(),
+
+                                        // Ukuran field
+                                        Forms\Components\Select::make('ukuran_id')
+                                            ->label('Ukuran')
+                                            ->options(fn() => \App\Models\Ukuran::pluck('nama_ukuran', 'id'))
+                                            ->createOptionForm([
+                                                Forms\Components\TextInput::make('nama_ukuran')
+                                                    ->label('Nama Ukuran')
+                                                    ->required()
+                                                    ->maxLength(255)
+                                                    ->unique('ukurans', 'nama_ukuran')
+                                                    ->columnSpanFull(),
+                                            ])
+                                            ->createOptionAction(
+                                                fn(Forms\Components\Actions\Action $action) => $action
+                                                    ->modalHeading('Tambah Ukuran Baru')
+                                                    ->modalDescription('Masukkan nama ukuran baru')
+                                                    ->modalSubmitActionLabel('Simpan')
+                                                    ->modalWidth('sm')
+                                            )
+                                            ->createOptionUsing(function (array $data) {
+                                                $existingUkuran = \App\Models\Ukuran::where('nama_ukuran', $data['nama_ukuran'])->first();
+                                                if ($existingUkuran) {
+                                                    return $existingUkuran->id;
+                                                }
+                                                return \App\Models\Ukuran::create($data)->id;
+                                            })
+                                            ->searchable()
+                                            ->preload()
+                                            ->required(),
+
+                                        // Tags with multiple select and create option
+                                        Forms\Components\Select::make('tags')
+                                            ->label('Tag Dataset')
+                                            ->relationship('tags', 'name')
+                                            ->multiple()
+                                            ->preload()
+                                            ->searchable()
+                                            ->createOptionForm([
+                                                Forms\Components\TextInput::make('name')
+                                                    ->label('Nama Tag')
+                                                    ->required()
+                                                    ->maxLength(255)
+                                                    ->unique('tags', 'name')
+                                                    ->columnSpanFull(),
+                                                Forms\Components\TextInput::make('slug')
+                                                    ->label('Slug')
+                                                    ->required()
+                                                    ->maxLength(255)
+                                                    ->unique('tags', 'slug')
+                                                    ->dehydrateStateUsing(fn($state) => \Illuminate\Support\Str::slug($state))
+                                                    ->columnSpanFull(),
+                                            ])
+                                            ->createOptionAction(
+                                                fn(Forms\Components\Actions\Action $action) => $action
+                                                    ->modalHeading('Tambah Tag Baru')
+                                                    ->modalDescription('Masukkan nama tag baru')
+                                                    ->modalSubmitActionLabel('Simpan')
+                                                    ->modalWidth('sm')
+                                            )
+                                            ->required()
+                                            ->columnSpanFull(),
+
+                                        // Other input fields
+                                        Forms\Components\TextInput::make('frekuensi_pembaruan')
+                                            ->label('Frekuensi Pembaruan')
+                                            ->maxLength(255),
+
+                                        Forms\Components\TextInput::make('dasar_rujukan_prioritas')
+                                            ->label('Dasar Rujukan Prioritas')
+                                            ->maxLength(255),
+
+                                        Forms\Components\TextInput::make('lisensi')
+                                            ->label('Lisensi')
+                                            ->maxLength(255),
+
+                                        Forms\Components\TextInput::make('sumber_data')
+                                            ->label('Sumber Data')
+                                            ->maxLength(255),
+
+                                        Forms\Components\DatePicker::make('tanggal_rilis')
+                                            ->label('Tanggal Rilis')
+                                            ->required(),
+
+                                        Forms\Components\TextInput::make('tahun_rilis')
+                                            ->label('Tahun Rilis')
+                                            ->maxLength(255),
+                                    ])
+                                    ->columns(1),
+                            ])
+                            ->columnSpan([
+                                'lg' => 2,
+                            ]),
+
+                        // Right Column - Auto-filled Fields
+                        Forms\Components\Grid::make(1)
+                            ->schema([
+                                Forms\Components\Section::make('Informasi Tambahan')
+                                    ->schema([
+                                        // Author information
+                                        Forms\Components\TextInput::make('penulis_kontak')
+                                            ->label('Penulis Kontak')
+                                            ->default(fn() => auth()->user()?->name)
+                                            ->required()
+                                            ->maxLength(255)
+                                            ->disabled()
+                                            ->dehydrated(),
+
+                                        Forms\Components\TextInput::make('email_penulis_kontak')
+                                            ->label('Email Penulis')
+                                            ->email()
+                                            ->default(fn() => auth()->user()?->email)
+                                            ->required()
+                                            ->maxLength(255)
+                                            ->disabled()
+                                            ->dehydrated(),
+
+                                        // Organization Info
+                                        Forms\Components\TextInput::make('pemelihara_data')
+                                            ->label('Pemelihara Data (Organisasi)')
+                                            ->default(fn() => auth()->user()?->organization?->name)
+                                            ->disabled()
+                                            ->dehydrated(),
+
+                                        Forms\Components\TextInput::make('email_pemelihara_data')
+                                            ->label('Email Pemelihara')
+                                            ->email()
+                                            ->default(fn() => auth()->user()?->organization?->email)
+                                            ->disabled()
+                                            ->dehydrated(),
+
+                                        // Audit trail display
+                                        Forms\Components\Placeholder::make('created_by_name')
+                                            ->label('Dibuat oleh')
+                                            ->content(fn($record) => $record?->createdBy?->name ?? auth()->user()?->name),
+
+                                        Forms\Components\Placeholder::make('updated_by_name')
+                                            ->label('Diedit terakhir')
+                                            ->content(fn($record) => $record?->updatedBy?->name ?? auth()->user()?->name),
+
+                                        // Hidden fields for tracking
+                                        Forms\Components\Hidden::make('created_by')
+                                            ->default(fn() => auth()->id())
+                                            ->dehydrated(),
+
+                                        Forms\Components\Hidden::make('updated_by')
+                                            ->default(fn() => auth()->id())
+                                            ->dehydrated(),
+                                    ])
+                                    ->columns(1)
+                                    ->collapsible()
+                                    ->collapsed(fn($operation) => $operation === 'create'),
+                            ])
+                            ->columnSpan([
+                                'lg' => 1,
+                            ]),
                     ])
-                    ->createOptionAction(
-                        fn(Forms\Components\Actions\Action $action) => $action
-                            ->modalHeading('Tambah Satuan Baru')
-                            ->modalDescription('Masukkan nama satuan baru')
-                            ->modalSubmitActionLabel('Simpan')
-                            ->modalWidth('sm')
-                    )
-                    ->createOptionUsing(function (array $data) {
-                        // Check if satuan with same name already exists
-                        $existingSatuan = \App\Models\Satuan::where('nama_satuan', $data['nama_satuan'])->first();
-
-                        if ($existingSatuan) {
-                            return $existingSatuan->id;
-                        }
-
-                        return \App\Models\Satuan::create($data)->id;
-                    })
-                    ->searchable()
-                    ->preload()
-                    ->required(),
-
-                // Field ukuran
-                Forms\Components\Select::make('ukuran_id')
-                    ->label('Ukuran')
-                    ->options(fn() => \App\Models\Ukuran::pluck('nama_ukuran', 'id'))
-                    ->createOptionForm([
-                        Forms\Components\TextInput::make('nama_ukuran')
-                            ->label('Nama Ukuran')
-                            ->required()
-                            ->maxLength(255)
-                            ->unique('ukurans', 'nama_ukuran')
-                            ->columnSpanFull(),
-                    ])
-                    ->createOptionAction(
-                        fn(Forms\Components\Actions\Action $action) => $action
-                            ->modalHeading('Tambah Ukuran Baru')
-                            ->modalDescription('Masukkan nama ukuran baru')
-                            ->modalSubmitActionLabel('Simpan')
-                            ->modalWidth('sm')
-                    )
-                    ->createOptionUsing(function (array $data) {
-                        // Check if ukuran with same name already exists
-                        $existingUkuran = \App\Models\Ukuran::where('nama_ukuran', $data['nama_ukuran'])->first();
-
-                        if ($existingUkuran) {
-                            return $existingUkuran->id;
-                        }
-
-                        return \App\Models\Ukuran::create($data)->id;
-                    })
-                    ->searchable()
-                    ->preload()
-                    ->required(),
-
-                // Tags with multiple select and create option
-                Forms\Components\Select::make('tags')
-                    ->label('Tag Dataset')
-                    ->relationship('tags', 'name')
-                    ->multiple()
-                    ->preload()
-                    ->searchable()
-                    ->createOptionForm([
-                        Forms\Components\TextInput::make('name')
-                            ->label('Nama Tag')
-                            ->required()
-                            ->maxLength(255)
-                            ->unique('tags', 'name')
-                            ->columnSpanFull(),
-                        Forms\Components\TextInput::make('slug')
-                            ->label('Slug')
-                            ->required()
-                            ->maxLength(255)
-                            ->unique('tags', 'slug')
-                            ->dehydrateStateUsing(fn($state) => \Illuminate\Support\Str::slug($state))
-                            ->columnSpanFull(),
-                    ])
-                    ->createOptionAction(
-                        fn(Forms\Components\Actions\Action $action) => $action
-                            ->modalHeading('Tambah Tag Baru')
-                            ->modalDescription('Masukkan nama tag baru')
-                            ->modalSubmitActionLabel('Simpan')
-                            ->modalWidth('sm')
-                    )
-                    ->required()
-                    ->columnSpanFull(),
-                Forms\Components\TextInput::make('frekuensi_pembaruan')
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('dasar_rujukan_prioritas')
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('lisensi')
-                    ->maxLength(255),
-                // Penulis Kontak
-                Forms\Components\TextInput::make('penulis_kontak')
-                    ->label('Penulis Kontak')
-                    ->default(fn() => auth()->user()?->name)
-                    ->required()
-                    ->maxLength(255),
-
-                // Email Penulis
-                Forms\Components\TextInput::make('email_penulis_kontak')
-                    ->label('Email Penulis')
-                    ->email()
-                    ->default(fn() => auth()->user()?->email)
-                    ->required()
-                    ->maxLength(255),
-
-                // Hidden fields for tracking
-                Forms\Components\Hidden::make('created_by')
-                    ->default(fn() => auth()->id())
-                    ->dehydrated(),
-
-                Forms\Components\Hidden::make('updated_by')
-                    ->default(fn() => auth()->id())
-                    ->dehydrated(),
-
-                // Display fields
-                Forms\Components\Placeholder::make('created_by_name')
-                    ->label('Dibuat oleh')
-                    ->content(fn() => auth()->user()?->name),
-
-                Forms\Components\Placeholder::make('updated_by_name')
-                    ->label('Diedit oleh')
-                    ->content(fn() => auth()->user()?->name),
-
-                // Organization Info
-                Forms\Components\TextInput::make('pemelihara_data')
-                    ->label('Pemelihara Data (Organisasi)')
-                    ->default(fn() => auth()->user()?->organization?->name)
-                    ->disabled()
-                    ->dehydrated(),
-
-                Forms\Components\TextInput::make('email_pemelihara_data')
-                    ->label('Email Pemelihara')
-                    ->email()
-                    ->default(fn() => auth()->user()?->organization?->email)
-                    ->disabled()
-                    ->dehydrated(),
-                Forms\Components\TextInput::make('sumber_data')
-                    ->maxLength(255),
-                Forms\Components\DatePicker::make('tanggal_rilis')
-                    ->native(false)
-                    ->default(now())
-                    ->displayFormat('d F Y'),
-                Forms\Components\DatePicker::make('tanggal_modifikasi_metadata')
-                    ->native(false)
-                    ->default(now())
-                    ->displayFormat('d F Y'),
-                // Forms\Components\TextInput::make('cakupan_waktu_mulai')
-                //     ->maxLength(255),
-                // Forms\Components\TextInput::make('cakupan_waktu_selesai')
-                //     ->maxLength(255),
-
-                // Forms\Components\TextInput::make('jumlah_dilihat')
-                //     ->required()
-                //     ->numeric()
-                //     ->default(0),
-                Forms\Components\TextInput::make('metadata_tambahan'),
-                Forms\Components\TextInput::make('kepatuhan_standar_data')
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('url_kamus_data')
-                    ->maxLength(255),
-                Forms\Components\Placeholder::make('created_by_name')
-                    ->label('Dibuat oleh')
-                    ->content(fn() => auth()->user()?->name),
-
-                Forms\Components\Placeholder::make('updated_by_name')
-                    ->label('Diedit oleh')
-                    ->content(fn() => auth()->user()?->name),
-                Forms\Components\Toggle::make('is_publik')
-                    ->required(),
-
+                    ->columns(3)
             ]);
     }
 
