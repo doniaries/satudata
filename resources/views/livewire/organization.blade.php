@@ -1,11 +1,26 @@
-<div class="container mx-auto p-4">
+<div class="container mx-auto p-4 relative">
+    <!-- Loading Indicator -->
+    <x-loading-indicator />
 
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        @forelse($organizations as $org)
-            <div class="bg-white shadow-lg rounded-lg p-6 card border border-gray-200">
-                <h2 class="text-xl font-bold mb-2 transition duration-200 ease-in-out hover:text-blue-600 hover:scale-105 cursor-pointer">{{ $org->name }}</h2>
-                <p class="text-gray-700 mb-4">{{ $org->alamat ?? '-' }}</p>
-                <div class="flex flex-wrap gap-4 text-gray-600 text-sm mt-2">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-6">
+        @php
+            $gradients = [
+                'from-blue-100 to-purple-100',
+                'from-green-100 to-teal-100',
+                'from-pink-100 to-rose-100',
+                'from-amber-100 to-orange-100',
+                'from-emerald-100 to-cyan-100',
+                'from-violet-100 to-fuchsia-100'
+            ];
+        @endphp
+        @forelse($organizations as $index => $org)
+            @php
+                $gradient = $gradients[$index % count($gradients)];
+            @endphp
+            <div class="bg-gradient-to-br {{ $gradient }} rounded-xl p-6 shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 border border-opacity-20 border-gray-200 hover:border-opacity-30">
+                <h2 class="text-xl font-bold mb-3 text-gray-800 transition duration-200 ease-in-out hover:text-indigo-600 cursor-pointer">{{ $org->name }}</h2>
+                <p class="text-gray-600 mb-4 leading-relaxed">{{ $org->alamat ?? '-' }}</p>
+                <div class="flex flex-wrap gap-4 text-sm mt-3">
                     @if ($org->nomor_telepon)
                         <span class="flex items-center">
                             <img src="https://img.icons8.com/fluency/24/phone-disconnected.png" alt="Telepon" class="mr-1" width="20" height="20"/>
@@ -31,11 +46,11 @@
             </div>
         @empty
             <div class="col-12">
-                <div class="alert alert-info">Belum ada data organisasi.</div>
+                <div class="bg-blue-100 text-blue-800 px-4 py-3 rounded-lg text-center">Belum ada data organisasi.</div>
             </div>
         @endforelse
     </div>
-    <div class="mt-6 flex justify-center">
+    <div class="mt-8 flex justify-center">
         {{ $organizations->links() }}
     </div>
 </div>
