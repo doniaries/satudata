@@ -222,11 +222,11 @@ class DatasetResource extends Resource
                     ->maxLength(255),
                 Forms\Components\Placeholder::make('created_by_name')
                     ->label('Dibuat oleh')
-                    ->default(fn() => auth()->user()?->organization?->name),
+                    ->content(fn() => auth()->user()?->name),
 
                 Forms\Components\Placeholder::make('updated_by_name')
                     ->label('Diedit oleh')
-                    ->default(fn() => auth()->user()?->organization?->name),
+                    ->content(fn() => auth()->user()?->name),
                 Forms\Components\Toggle::make('is_publik')
                     ->required(),
 
