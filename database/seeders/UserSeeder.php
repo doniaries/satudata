@@ -35,6 +35,23 @@ class UserSeeder extends Seeder
                 $this->command->warn('Role super_admin tidak ditemukan');
             }
 
+            $adminSatudata = User::updateOrCreate(
+                ['email' => 'admin@satudata.id'],
+                [
+                    'name' => 'Admin Satudata',
+                    'password' => Hash::make('password'),
+                    'is_active' => true,
+                    'id_organization' => '10',
+                ]
+            );
+
+            // Assign role admin_satudata dengan pengecekan
+            if (Role::where('name', 'admin_satudata')->exists()) {
+                $adminSatudata->assignRole('admin_satudata');
+            } else {
+                $this->command->warn('Role admin_satudata tidak ditemukan');
+            }
+
             // Ambil semua organisasi yang ada
             $organizations = Organization::all();
 

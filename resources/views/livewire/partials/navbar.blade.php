@@ -165,11 +165,13 @@
                     </a>
                 @endguest
                 @auth
-                    <a href="/admin" class="login-btn text-white bg-blue-600 hover:bg-green-600 focus:ring-4 focus:ring-blue-300 rounded-lg text-sm px-4 py-1.5 focus:outline-none transition-all duration-200 flex items-center justify-center shadow-md hover:shadow-lg transform hover:scale-105 relative z-10" title="Dashboard">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 relative z-10 mr-1">
+                    <a href="/admin"
+                        class="login-btn text-white bg-blue-600 hover:bg-green-600 focus:ring-4 focus:ring-blue-300 rounded-lg text-sm px-4 py-1.5 focus:outline-none transition-all duration-200 flex items-center justify-center shadow-md hover:shadow-lg transform hover:scale-105 relative z-10"
+                        title="Dashboard">
+                        {{-- <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 relative z-10 mr-1">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M3 13.5V6.75A2.25 2.25 0 0 1 5.25 4.5h13.5A2.25 2.25 0 0 1 21 6.75v6.75M3 13.5l9 6 9-6" />
-                        </svg>
-                        <span class="hidden sm:inline">Dashboard</span>
+                        </svg> --}}
+                        <span class="hidden sm:inline">{{ Auth::user()->getRoleNames()->first() }}</span>
                     </a>
                 @endauth
 

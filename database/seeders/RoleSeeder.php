@@ -17,6 +17,7 @@ class RoleSeeder extends Seeder
         // Buat roles
         $superAdmin = Role::firstOrCreate(['name' => 'super_admin', 'guard_name' => 'web']);
         $adminSatudata = Role::firstOrCreate(['name' => 'admin_satudata', 'guard_name' => 'web']);
+        $adminOpd = Role::firstOrCreate(['name' => 'admin_opd', 'guard_name' => 'web']);
         $user = Role::firstOrCreate(['name' => 'user', 'guard_name' => 'web']);
 
         // Get all permissions
