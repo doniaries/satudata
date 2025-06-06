@@ -10,17 +10,12 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use function Livewire\wrap;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 
 class DatasetResource extends Resource
 {
     protected static ?string $model = Dataset::class;
-
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     public static function form(Form $form): Form
@@ -28,22 +23,27 @@ class DatasetResource extends Resource
         $user = Auth::user();
         $isSuperAdmin = $user->hasRole('super_admin');
         $isAdminSatuData = $user->hasRole('admin_satudata');
+        $userOrganizationId = $user->organization_id;
 
         return $form
             ->schema([
                 Forms\Components\Grid::make()
+                    ->columns(2)
                     ->schema([
-                        // Left Column - User Input Fields
+                        // Left Column
                         Forms\Components\Grid::make(1)
                             ->schema([
-                                Forms\Components\Section::make('Informasi Dataset')
+                                // Informasi Dasar Dataset
+                                Forms\Components\Section::make('Informasi Dasar Dataset')
                                     ->schema([
-                                        // Main dataset fields
                                         Forms\Components\TextInput::make('judul')
+                                            ->label('Judul Dataset')
                                             ->required()
                                             ->maxLength(255)
                                             ->live(onBlur: true)
-                                            ->afterStateUpdated(fn(string $operation, $state, callable $set) => $operation === 'create' ? $set('slug', Str::slug($state)) : null),
+                                            ->afterStateUpdated(fn(string $operation, $state, callable $set) =>
+                                            $operation === 'create' ? $set('slug', Str::slug($state)) : null)
+                                            ->columnSpanFull(),
 
                                         Forms\Components\Hidden::make('slug')
                                             ->disabled()
@@ -51,302 +51,224 @@ class DatasetResource extends Resource
                                             ->required()
                                             ->unique(Dataset::class, 'slug', ignoreRecord: true),
 
-                                        Forms\Components\Textarea::make('deskripsi_dataset')
-                                            ->label('Deskripsi Dataset')
+                                        Forms\Components\Select::make('id_organization')
+                                            ->label('Organisasi')
+                                            ->relationship('organization', 'name')
+                                            ->default($userOrganizationId)
                                             ->required()
+                                            ->disabled(fn() => !$isSuperAdmin && !$isAdminSatuData)
+                                            ->dehydrated()
+                                            ->afterStateHydrated(function ($component) use ($userOrganizationId) {
+                                                if (!$component->getState()) {
+                                                    $component->state($userOrganizationId);
+                                                }
+                                            })
+                                            ->helperText(fn() => (!$isSuperAdmin && !$isAdminSatuData)
+                                                ? 'Organisasi Anda: ' . \App\Models\Organization::find($userOrganizationId)?->name
+                                                : null)
                                             ->columnSpanFull(),
 
-                                        // Satuan with pluck for better performance
-                                        // Satuan and Ukuran in one row
+                                        Forms\Components\Textarea::make('deskripsi_dataset')
+                                            ->label('Deskripsi')
+                                            ->required()
+                                            ->columnSpanFull()
+                                            ->rows(3),
+                                    ]),
+
+                                // Informasi Teknis
+                                Forms\Components\Section::make('Informasi Teknis')
+                                    ->schema([
                                         Forms\Components\Grid::make(2)
                                             ->schema([
-                                                // Satuan field
                                                 Forms\Components\Select::make('satuan_id')
                                                     ->label('Satuan')
-                                                    ->options(fn() => \App\Models\Satuan::pluck('nama_satuan', 'id'))
+                                                    ->relationship('satuan', 'nama_satuan')
+                                                    ->searchable()
+                                                    ->preload()
                                                     ->createOptionForm([
                                                         Forms\Components\TextInput::make('nama_satuan')
-                                                            ->label('Nama Satuan')
                                                             ->required()
                                                             ->maxLength(255)
-                                                            ->unique('satuans', 'nama_satuan')
-                                                            ->columnSpanFull(),
-                                                    ])
-                                                    ->createOptionAction(
-                                                        fn(Forms\Components\Actions\Action $action) => $action
-                                                            ->modalHeading('Tambah Satuan Baru')
-                                                            ->modalDescription('Masukkan nama satuan baru')
-                                                            ->modalSubmitActionLabel('Simpan')
-                                                            ->modalWidth('sm')
-                                                    )
-                                                    ->createOptionUsing(function (array $data) {
-                                                        $existingSatuan = \App\Models\Satuan::where('nama_satuan', $data['nama_satuan'])->first();
-                                                        if ($existingSatuan) {
-                                                            return $existingSatuan->id;
-                                                        }
-                                                        return \App\Models\Satuan::create($data)->id;
-                                                    })
-                                                    ->searchable()
-                                                    ->preload()
-                                                    ->required(),
+                                                            ->unique('satuans', 'nama_satuan'),
+                                                    ]),
 
-                                                // Ukuran field
                                                 Forms\Components\Select::make('ukuran_id')
                                                     ->label('Ukuran')
-                                                    ->options(fn() => \App\Models\Ukuran::pluck('nama_ukuran', 'id'))
-                                                    ->createOptionForm([
-                                                        Forms\Components\TextInput::make('nama_ukuran')
-                                                            ->label('Nama Ukuran')
-                                                            ->required()
-                                                            ->maxLength(255)
-                                                            ->unique('ukurans', 'nama_ukuran')
-                                                            ->columnSpanFull(),
-                                                    ])
-                                                    ->createOptionAction(
-                                                        fn(Forms\Components\Actions\Action $action) => $action
-                                                            ->modalHeading('Tambah Ukuran Baru')
-                                                            ->modalDescription('Masukkan nama ukuran baru')
-                                                            ->modalSubmitActionLabel('Simpan')
-                                                            ->modalWidth('sm')
-                                                    )
-                                                    ->createOptionUsing(function (array $data) {
-                                                        $existingUkuran = \App\Models\Ukuran::where('nama_ukuran', $data['nama_ukuran'])->first();
-                                                        if ($existingUkuran) {
-                                                            return $existingUkuran->id;
-                                                        }
-                                                        return \App\Models\Ukuran::create($data)->id;
-                                                    })
+                                                    ->relationship('ukuran', 'nama_ukuran')
                                                     ->searchable()
                                                     ->preload()
-                                                    ->required(),
+                                                    ->createOptionForm([
+                                                        Forms\Components\TextInput::make('nama_ukuran')
+                                                            ->required()
+                                                            ->maxLength(255)
+                                                            ->unique('ukurans', 'nama_ukuran'),
+                                                    ]),
                                             ]),
-                                        // Other input fields
-                                        // Tags with multiple select and create option
-                                        Forms\Components\Select::make('tags')
-                                            ->label('Tag Dataset')
-                                            ->relationship('tags', 'name')
-                                            ->multiple()
-                                            ->preload()
-                                            ->searchable()
-                                            ->createOptionForm([
-                                                Forms\Components\TextInput::make('name')
-                                                    ->label('Nama Tag')
-                                                    ->required()
-                                                    ->maxLength(255)
-                                                    ->unique('tags', 'name')
-                                                    ->columnSpanFull(),
-                                                Forms\Components\TextInput::make('slug')
-                                                    ->label('Slug')
-                                                    ->required()
-                                                    ->maxLength(255)
-                                                    ->unique('tags', 'slug')
-                                                    ->dehydrateStateUsing(fn($state) => \Illuminate\Support\Str::slug($state))
-                                                    ->columnSpanFull(),
-                                            ])
-                                            ->createOptionAction(
-                                                fn(Forms\Components\Actions\Action $action) => $action
-                                                    ->modalHeading('Tambah Tag Baru')
-                                                    ->modalDescription('Masukkan nama tag baru')
-                                                    ->modalSubmitActionLabel('Simpan')
-                                                    ->modalWidth('sm')
-                                            )
-                                            ->required(),
+
                                         Forms\Components\TextInput::make('frekuensi_pembaruan')
                                             ->label('Frekuensi Pembaruan')
-                                            ->maxLength(255),
+                                            ->maxLength(255)
+                                            ->helperText('Contoh: Harian, Mingguan, Bulanan, Tahunan')
+                                            ->columnSpanFull(),
 
                                         Forms\Components\TextInput::make('dasar_rujukan_prioritas')
                                             ->label('Dasar Rujukan Prioritas')
-                                            ->maxLength(255),
+                                            ->maxLength(255)
+                                            ->columnSpanFull(),
 
                                         Forms\Components\TextInput::make('lisensi')
                                             ->label('Lisensi')
-                                            ->maxLength(255),
-
-                                        Forms\Components\TextInput::make('sumber_data')
-                                            ->label('Sumber Data')
-                                            ->maxLength(255),
+                                            ->default('CC BY-SA 4.0')
+                                            ->maxLength(255)
+                                            ->columnSpanFull(),
 
                                         Forms\Components\DatePicker::make('tanggal_rilis')
                                             ->label('Tanggal Rilis')
-                                            ->native(false)
-                                            ->default(now())
-                                            ->displayFormat('d/m/Y')
-                                            ->firstDayOfWeek(7) // 7 = Sunday
                                             ->required()
-                                            ->suffixIcon('heroicon-o-calendar')
-                                            ->closeOnDateSelection()
-                                            ->locale('id'),
+                                            ->default(now())
+                                            ->columnSpanFull(),
 
-                                        Forms\Components\Select::make('tahun_rilis')
-                                            ->label('Tahun Rilis')
-                                            ->options(range(now()->year, 2010, -1))
-                                            ->default(now()->year)
-                                            ->searchable(),
-
-                                    ])
-                                    ->columns(1),
+                                        Forms\Components\Toggle::make('is_publik')
+                                            ->label('Publikasikan Dataset')
+                                            ->default(true)
+                                            ->helperText('Centang untuk mempublikasikan dataset')
+                                            ->columnSpanFull(),
+                                    ]),
                             ])
-                            ->columnSpan([
-                                'lg' => 2,
-                            ]),
+                            ->columnSpan(1),
 
-                        // Right Column - Auto-filled Fields
+                        // Right Column
                         Forms\Components\Grid::make(1)
                             ->schema([
-                                Forms\Components\Section::make('Informasi Tambahan')
+                                // Informasi Kontak
+                                Forms\Components\Section::make('Informasi Kontak')
                                     ->schema([
-                                        // Author information
-                                        Forms\Components\TextInput::make('penulis_kontak')
-                                            ->label('Penulis')
-                                            ->default(fn() => auth()->user()?->name)
-                                            ->required()
-                                            ->maxLength(255)
-                                            ->disabled()
-                                            ->dehydrated(),
+                                        Forms\Components\Grid::make(2)
+                                            ->schema([
+                                                Forms\Components\TextInput::make('penulis_kontak')
+                                                    ->label('Nama Penulis')
+                                                    ->default($user->name)
+                                                    ->maxLength(255)
+                                                    ->required(),
 
-                                        Forms\Components\TextInput::make('email_penulis_kontak')
-                                            ->label('Email Penulis')
-                                            ->email()
-                                            ->default(fn() => auth()->user()?->email)
-                                            ->required()
-                                            ->maxLength(255)
-                                            ->disabled()
-                                            ->dehydrated(),
+                                                Forms\Components\TextInput::make('email_penulis_kontak')
+                                                    ->label('Email Penulis')
+                                                    ->email()
+                                                    ->default($user->email)
+                                                    ->maxLength(255)
+                                                    ->required(),
+                                            ]),
 
-                                        // Organization Info
                                         Forms\Components\TextInput::make('pemelihara_data')
-                                            ->label('Pemelihara Data (Organisasi)')
-                                            ->default(fn() => auth()->user()?->organization?->name)
-                                            ->disabled()
-                                            ->dehydrated(),
+                                            ->label('Pemelihara Data')
+                                            ->maxLength(255)
+                                            ->helperText('Nama instansi/divisi yang memelihara data')
+                                            ->columnSpanFull(),
 
                                         Forms\Components\TextInput::make('email_pemelihara_data')
                                             ->label('Email Pemelihara')
                                             ->email()
-                                            ->default(fn() => auth()->user()?->organization?->email_organisasi)
-                                            ->disabled()
-                                            ->dehydrated(),
+                                            ->maxLength(255)
+                                            ->columnSpanFull(),
 
-                                        // Audit trail display
-                                        Forms\Components\TextInput::make('created_by_name')
-                                            ->label('Dibuat oleh')
-                                            ->default(fn() => auth()->user()?->name)
-                                            ->disabled()
-                                            ->dehydrated(),
-                                        Forms\Components\TextInput::make('updated_by_name')
-                                            ->label('Diedit terakhir')
-                                            ->default(fn() => auth()->user()?->name)
-                                            ->disabled()
-                                            ->dehydrated(),
+                                        Forms\Components\TextInput::make('sumber_data')
+                                            ->label('Sumber Data')
+                                            ->maxLength(255)
+                                            ->helperText('Sumber asli data (jika berbeda dengan organisasi pemilik)')
+                                            ->columnSpanFull(),
+                                    ]),
 
-                                    ])
-                                    ->columns(1),
-                                // ->collapsible()
-                                // ->collapsed(fn($operation) => $operation === 'create'),
+                                // Informasi Resource
+                                Forms\Components\Section::make('Informasi Resource')
+                                    ->schema([
+                                        Forms\Components\TextInput::make('nama_resource')
+                                            ->label('Nama Resource')
+                                            ->required()
+                                            ->maxLength(255)
+                                            ->helperText('Nama file atau sumber data')
+                                            ->columnSpanFull(),
+
+                                        Forms\Components\Textarea::make('deskripsi_resource')
+                                            ->label('Deskripsi Resource')
+                                            ->columnSpanFull()
+                                            ->rows(3),
+
+                                        Forms\Components\FileUpload::make('file_path')
+                                            ->label('File')
+                                            ->directory('datasets')
+                                            ->preserveFilenames()
+                                            ->downloadable()
+                                            ->openable()
+                                            ->columnSpanFull(),
+
+                                        Forms\Components\Select::make('format')
+                                            ->label('Format File')
+                                            ->options([
+                                                'CSV' => 'CSV',
+                                                'XLS' => 'Excel',
+                                                'XLSX' => 'Excel (XLSX)',
+                                                'PDF' => 'PDF',
+                                                'JSON' => 'JSON',
+                                                'API' => 'API',
+                                                'Lainnya' => 'Lainnya',
+                                            ])
+                                            ->searchable()
+                                            ->columnSpanFull(),
+
+                                        Forms\Components\TextInput::make('ukuran_file')
+                                            ->label('Ukuran File (bytes)')
+                                            ->numeric()
+                                            ->disabled()
+                                            ->columnSpanFull(),
+
+                                        Forms\Components\TextInput::make('url_kamus_data')
+                                            ->label('URL Kamus Data')
+                                            ->url()
+                                            ->maxLength(255)
+                                            ->columnSpanFull(),
+                                    ]),
+
+                                // Metadata Tambahan
+                                Forms\Components\Section::make('Metadata Tambahan')
+                                    ->schema([
+                                        Forms\Components\KeyValue::make('metadata_tambahan')
+                                            ->keyLabel('Kunci')
+                                            ->valueLabel('Nilai')
+                                            ->reorderable()
+                                            ->columnSpanFull(),
+                                    ]),
+
+                                // Hidden Fields
+                                Forms\Components\Hidden::make('created_by_user_id')
+                                    ->default(fn() => $user->id),
+
+                                Forms\Components\Hidden::make('updated_by_user_id')
+                                    ->default(fn() => $user->id),
+
+                                Forms\Components\Hidden::make('terakhir_diubah')
+                                    ->default(now()),
+
+                                Forms\Components\Hidden::make('jumlah_diunduh')
+                                    ->default(0)
                             ])
-                            ->columnSpan([
-                                'lg' => 1,
-                            ]),
+                            ->columnSpan(1),
                     ])
-                    ->columns(3)
             ]);
     }
+
 
     public static function table(Table $table): Table
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('organization.name')
-                    ->label('Organisasi')
-                    ->wrap()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('judul')
-                    ->label('Judul')
-                    ->wrap()
-                    ->searchable(),
-                // Tables\Columns\TextColumn::make('slug')
-                //     ->searchable(),
-                Tables\Columns\TextColumn::make('satuan.nama_satuan')
-                    ->label('Satuan')
-                    ->searchable()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('ukuran.nama_ukuran')
-                    ->label('Ukuran')
-                    ->searchable()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('frekuensi_pembaruan')
-                    ->label('Pembaruan')
-                    ->searchable()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('dasar_rujukan_prioritas')
-                    ->label('Dasar Rujukan Prioritas')
-                    ->wrap()
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('lisensi')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('penulis_kontak')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('email_penulis_kontak')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('pemelihara_data')
-                    ->wrap()
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('email_pemelihara_data')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('sumber_data')
-                    ->wrap()
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('tanggal_rilis')
-                    ->date()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('tanggal_modifikasi_metadata')
-                    ->date()
-                    ->toggleable(isToggledHiddenByDefault: true)
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('cakupan_waktu_mulai')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('cakupan_waktu_selesai')
-                    ->searchable(),
-                Tables\Columns\IconColumn::make('is_publik')
-                    ->boolean(),
-                Tables\Columns\TextColumn::make('jumlah_dilihat')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('kepatuhan_standar_data')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('url_kamus_data')
-                    ->label('Kamus Data')
-                    ->wrap()
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('createdBy.name')
-                    ->label('Dibuat oleh')
-                    ->sortable()
-                    ->searchable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updatedBy.name')
-                    ->label('Diedit oleh')
-                    ->sortable()
-                    ->searchable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('deleted_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                // Table columns here
             ])
             ->filters([
-                //
+                // Table filters here
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -355,12 +277,14 @@ class DatasetResource extends Resource
             ]);
     }
 
+
     public static function getRelations(): array
     {
         return [
             //
         ];
     }
+
 
     public static function getPages(): array
     {
