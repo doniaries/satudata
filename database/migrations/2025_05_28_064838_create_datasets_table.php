@@ -34,13 +34,13 @@ return new class extends Migration
             // Kolom dari resource
             $table->string('nama_resource');
             $table->text('deskripsi_resource')->nullable();
+            $table->foreignId('satuan_id')->nullable()->constrained('satuans')->onDelete('set null');
+            $table->foreignId('ukuran_id')->nullable()->constrained('ukurans')->onDelete('set null');
             $table->string('file_path')->nullable(); // Path lokal atau URL eksternal
             $table->string('format')->nullable(); // CSV, XLS, PDF, API, dll.
             $table->unsignedBigInteger('ukuran_file')->nullable(); // Dalam bytes
             $table->dateTime('terakhir_diubah')->nullable();
             $table->unsignedInteger('jumlah_diunduh')->default(0);
-            $table->foreignId('satuan_id')->nullable()->constrained('satuans')->onDelete('set null');
-            $table->foreignId('ukuran_id')->nullable()->constrained('ukurans')->onDelete('set null');
 
             $table->foreignId('created_by_user_id')->nullable()->constrained('users')->onDelete('set null');
             $table->foreignId('updated_by_user_id')->nullable()->constrained('users')->onDelete('set null');

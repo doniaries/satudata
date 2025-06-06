@@ -136,28 +136,27 @@ class DatasetResource extends Resource
                                     ]),
                             ])
                             ->columnSpan(1),
-
-                        // Right Column
+                        // Right Column - FIXED SECTION
                         Forms\Components\Grid::make(1)
                             ->schema([
-                                // Informasi Kontak
+                                // Informasi Kontak (Hidden)
                                 Forms\Components\Section::make('Informasi Kontak')
                                     ->schema([
-                                        Forms\Components\Grid::make(2)
-                                            ->schema([
-                                                Forms\Components\TextInput::make('penulis_kontak')
-                                                    ->label('Nama Penulis')
-                                                    ->default($user->name)
-                                                    ->maxLength(255)
-                                                    ->required(),
+                                        Forms\Components\Hidden::make('email_penulis_kontak')
+                                            ->dehydrated()
+                                            ->default($user->email),
 
-                                                Forms\Components\TextInput::make('email_penulis_kontak')
-                                                    ->label('Email Penulis')
-                                                    ->email()
-                                                    ->default($user->email)
-                                                    ->maxLength(255)
-                                                    ->required(),
-                                            ]),
+                                        Forms\Components\Hidden::make('pemelihara_data')
+                                            ->dehydrated()
+                                            ->default($user->name),
+
+                                        Forms\Components\Hidden::make('email_pemelihara_data')
+                                            ->dehydrated()
+                                            ->default($user->email),
+
+                                        Forms\Components\Hidden::make('sumber_data')
+                                            ->dehydrated()
+                                            ->default($user->name),
 
                                         Forms\Components\TextInput::make('pemelihara_data')
                                             ->label('Pemelihara Data')
@@ -177,7 +176,10 @@ class DatasetResource extends Resource
                                             ->helperText('Sumber asli data (jika berbeda dengan organisasi pemilik)')
                                             ->columnSpanFull(),
                                     ]),
-
+                            ])
+                            ->columnSpan(1),
+                        Forms\Components\Grid::make(1)
+                            ->schema([
                                 // Informasi Resource
                                 Forms\Components\Section::make('Informasi Resource')
                                     ->schema([
@@ -249,12 +251,13 @@ class DatasetResource extends Resource
                                     ->default(now()),
 
                                 Forms\Components\Hidden::make('jumlah_diunduh')
-                                    ->default(0)
+                                    ->default(0),
                             ])
                             ->columnSpan(1),
                     ])
             ]);
     }
+
 
 
     public static function table(Table $table): Table
