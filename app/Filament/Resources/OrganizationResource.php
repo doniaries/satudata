@@ -12,6 +12,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Str;
 
 class OrganizationResource extends Resource
 {
@@ -25,13 +26,17 @@ class OrganizationResource extends Resource
             ->schema([
                 Forms\Components\TextInput::make('name')
                     ->required()
+                    ->live(onBlur: true)
+                    ->afterStateUpdated(function ($state, callable $set) {
+                        $set('slug', Str::slug($state));
+                    })
                     ->maxLength(255),
                 Forms\Components\TextInput::make('slug')
-                    ->required()
-                    ->maxLength(255),
+                    ->readOnly(),
                 Forms\Components\FileUpload::make('url_logo')
-                    ->required()
-                    ->image(),
+                    ->label('Logo Organisasi')
+                    ->image()
+                    ->imageEditor(),
                 Forms\Components\TextInput::make('alamat')
                     ->maxLength(255),
                 Forms\Components\TextInput::make('nomor_telepon')
@@ -43,12 +48,20 @@ class OrganizationResource extends Resource
                 Forms\Components\TextInput::make('website_organisasi')
                     ->maxLength(255),
                 Forms\Components\TextInput::make('facebook')
+                    ->label('Facebook Organisasi')
+                    ->placeholder('https://facebook.com/organization')
                     ->maxLength(255),
                 Forms\Components\TextInput::make('twitter')
+                    ->label('Twitter Organisasi')
+                    ->placeholder('https://twitter.com/organization')
                     ->maxLength(255),
                 Forms\Components\TextInput::make('instagram')
+                    ->label('Instagram Organisasi')
+                    ->placeholder('https://instagram.com/organization')
                     ->maxLength(255),
                 Forms\Components\TextInput::make('youtube')
+                    ->label('Youtube Organisasi')
+                    ->placeholder('https://youtube.com/organization')
                     ->maxLength(255),
             ]);
     }
@@ -59,9 +72,10 @@ class OrganizationResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('name')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('slug')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('url_logo')
+                // Tables\Columns\TextColumn::make('slug')
+                //     ->searchable(),
+                Tables\Columns\ImageColumn::make('url_logo')
+                    ->label('Logo Organisasi')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('alamat')
                     ->searchable(),

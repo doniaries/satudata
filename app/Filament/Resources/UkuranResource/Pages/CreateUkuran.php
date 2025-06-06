@@ -9,4 +9,9 @@ use Filament\Resources\Pages\CreateRecord;
 class CreateUkuran extends CreateRecord
 {
     protected static string $resource = UkuranResource::class;
+
+    protected function getRedirectUrl(): string
+    {
+        return $this->getResource()::getUrl('index');
+    }
 }

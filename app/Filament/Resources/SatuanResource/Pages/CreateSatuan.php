@@ -9,4 +9,9 @@ use Filament\Resources\Pages\CreateRecord;
 class CreateSatuan extends CreateRecord
 {
     protected static string $resource = SatuanResource::class;
+
+    protected function getRedirectUrl(): string
+    {
+        return $this->getResource()::getUrl('index');
+    }
 }
