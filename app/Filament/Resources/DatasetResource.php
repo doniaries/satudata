@@ -128,20 +128,6 @@ class DatasetResource extends Resource
                                             ->default(now())
                                             ->columnSpanFull(),
 
-                                        Forms\Components\Toggle::make('is_publik')
-                                            ->label('Publikasikan Dataset')
-                                            ->default(true)
-                                            ->helperText('Centang untuk mempublikasikan dataset')
-                                            ->columnSpanFull(),
-                                    ]),
-                            ])
-                            ->columnSpan(1),
-                        // Right Column - FIXED SECTION
-                        Forms\Components\Grid::make(1)
-                            ->schema([
-                                // Informasi Kontak (Hidden)
-                                Forms\Components\Section::make('Informasi Kontak')
-                                    ->schema([
                                         Forms\Components\Hidden::make('email_penulis_kontak')
                                             ->dehydrated()
                                             ->default($user->email),
@@ -157,27 +143,11 @@ class DatasetResource extends Resource
                                         Forms\Components\Hidden::make('sumber_data')
                                             ->dehydrated()
                                             ->default($user->name),
-
-                                        Forms\Components\TextInput::make('pemelihara_data')
-                                            ->label('Pemelihara Data')
-                                            ->maxLength(255)
-                                            ->helperText('Nama instansi/divisi yang memelihara data')
-                                            ->columnSpanFull(),
-
-                                        Forms\Components\TextInput::make('email_pemelihara_data')
-                                            ->label('Email Pemelihara')
-                                            ->email()
-                                            ->maxLength(255)
-                                            ->columnSpanFull(),
-
-                                        Forms\Components\TextInput::make('sumber_data')
-                                            ->label('Sumber Data')
-                                            ->maxLength(255)
-                                            ->helperText('Sumber asli data (jika berbeda dengan organisasi pemilik)')
-                                            ->columnSpanFull(),
                                     ]),
                             ])
                             ->columnSpan(1),
+
+
                         Forms\Components\Grid::make(1)
                             ->schema([
                                 // Informasi Resource
@@ -254,6 +224,11 @@ class DatasetResource extends Resource
                                     ->default(0),
                             ])
                             ->columnSpan(1),
+                        Forms\Components\Toggle::make('is_publik')
+                            ->label('Publikasikan Dataset')
+                            ->default(true)
+                            ->helperText('Centang untuk mempublikasikan dataset')
+                            ->columnSpanFull(),
                     ])
             ]);
     }
