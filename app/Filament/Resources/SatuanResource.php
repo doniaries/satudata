@@ -34,6 +34,7 @@ class SatuanResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('nama_satuan')
+                    ->label('Nama Satuan')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
@@ -44,6 +45,7 @@ class SatuanResource extends Resource
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
+            ->defaultSort('nama_satuan', 'asc')
             ->filters([
                 //
             ])

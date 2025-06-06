@@ -14,25 +14,26 @@
                             </svg>
                             ORGANISASI
                         </h2>
-                        @if($organization || $tag)
-                            <a href="{{ route('dataset.index') }}" 
-                               class="text-xs text-blue-600 hover:underline flex items-center gap-1">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" 
-                                    stroke="currentColor" class="w-3.5 h-3.5">
+                        @if ($organization || $tag)
+                            <a href="{{ route('dataset.index') }}"
+                                class="text-xs text-blue-600 hover:underline flex items-center gap-1">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                    stroke-width="2" stroke="currentColor" class="w-3.5 h-3.5">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                                 </svg>
                                 Reset
                             </a>
                         @endif
                     </div>
-                    
+
                     <div class="space-y-1 max-h-96 overflow-y-auto pr-2">
                         @forelse($organizations as $org)
-                            <a href="{{ route('dataset.organization', $org->slug) }}" 
-                               class="block p-2 rounded-lg hover:bg-gray-50 transition-colors duration-150 {{ $organization == $org->slug ? 'bg-blue-50 font-medium text-blue-700' : 'text-gray-700' }}">
+                            <a href="{{ route('dataset.organization', $org->slug) }}"
+                                class="block p-2 rounded-lg hover:bg-gray-50 transition-colors duration-150 {{ $organization == $org->slug ? 'bg-blue-50 font-medium text-blue-700' : 'text-gray-700' }}">
                                 <div class="flex justify-between items-center">
                                     <span class="text-sm truncate">{{ $org->name }}</span>
-                                    <span class="text-xs px-2 py-0.5 rounded-full {{ $organization == $org->slug ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-600' }}">
+                                    <span
+                                        class="text-xs px-2 py-0.5 rounded-full {{ $organization == $org->slug ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-600' }}">
                                         {{ $org->datasets_count }}
                                     </span>
                                 </div>
@@ -47,32 +48,33 @@
                 <div class="mb-8">
                     <div class="flex justify-between items-center mb-3">
                         <h2 class="font-bold flex items-center gap-2 text-gray-700 text-base">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                                stroke="currentColor" class="w-5 h-5">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
                                 <path stroke-linecap="round" stroke-linejoin="round"
                                     d="M9.568 3H5.25A2.25 2.25 0 0 0 3 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 0 0 5.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 0 0 9.568 3Z" />
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M6 6h.008v.008H6V6Z" />
                             </svg>
                             TAG POPULER
                         </h2>
-                        @if($tag)
-                            <a href="{{ route('datasets.index') }}" 
-                               class="text-xs text-blue-600 hover:underline flex items-center gap-1">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" 
-                                    stroke="currentColor" class="w-3.5 h-3.5">
+                        @if ($tag)
+                            <a href="{{ route('datasets.index') }}"
+                                class="text-xs text-blue-600 hover:underline flex items-center gap-1">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                    stroke-width="2" stroke="currentColor" class="w-3.5 h-3.5">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                                 </svg>
                                 Reset
                             </a>
                         @endif
                     </div>
-                    
+
                     <div class="flex flex-wrap gap-2">
                         @forelse($tags as $t)
-                            <a href="{{ route('dataset.tag', $t->slug) }}" 
-                               class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium {{ $tag == $t->slug ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-800' }} hover:bg-gray-200 transition-colors duration-150">
+                            <a href="{{ route('dataset.tag', $t->slug) }}"
+                                class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium {{ $tag == $t->slug ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-800' }} hover:bg-gray-200 transition-colors duration-150">
                                 #{{ $t->name }}
-                                <span class="ml-1.5 px-1.5 py-0.5 rounded-full text-xs {{ $tag == $t->slug ? 'bg-blue-200 text-blue-900' : 'bg-gray-200 text-gray-700' }}">
+                                <span
+                                    class="ml-1.5 px-1.5 py-0.5 rounded-full text-xs {{ $tag == $t->slug ? 'bg-blue-200 text-blue-900' : 'bg-gray-200 text-gray-700' }}">
                                     {{ $t->datasets_count }}
                                 </span>
                             </a>
@@ -112,18 +114,23 @@
             <!-- Main Content -->
             <main class="flex-1 bg-white">
                 <!-- Loading Overlay -->
-                <div wire:loading.flex class="fixed inset-0 bg-black bg-opacity-30 z-50 items-center justify-center" style="display: none;">
+                <div wire:loading.flex class="fixed inset-0 bg-black bg-opacity-30 z-50 items-center justify-center"
+                    style="display: none;">
                     <div class="bg-white p-6 rounded-lg shadow-xl">
                         <div class="flex items-center space-x-4">
-                            <svg class="animate-spin h-8 w-8 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            <svg class="animate-spin h-8 w-8 text-blue-600" xmlns="http://www.w3.org/2000/svg"
+                                fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                    stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor"
+                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                                </path>
                             </svg>
                             <span class="text-lg font-medium text-gray-700">Memuat data...</span>
                         </div>
                     </div>
                 </div>
-                
+
                 <!-- Header Section -->
                 <div class="bg-white p-4 md:p-8 rounded-lg">
                     <div class="flex items-center space-x-3 mb-4">
@@ -144,79 +151,94 @@
                     </p>
 
                     <!-- Active Filters -->
-                    @if($organization || $tag)
-                    <div class="mb-4 flex flex-wrap gap-2">
-                        @if($organization)
-                            @php $org = $organizations->firstWhere('slug', $organization); @endphp
-                            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
-                                Organisasi: {{ $org->name ?? $organization }}
-                                <button wire:click="$set('organization', null)" class="ml-2 text-blue-600 hover:text-blue-800">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
-                                    </svg>
-                                </button>
-                            </span>
-                        @endif
-                        
-                        @if($tag)
-                            @php $tagItem = $tags->firstWhere('slug', $tag); @endphp
-                            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
-                                Tag: {{ $tagItem->name ?? $tag }}
-                                <button wire:click="$set('tag', null)" class="ml-2 text-blue-600 hover:text-blue-800">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
-                                    </svg>
-                                </button>
-                            </span>
-                        @endif
-                        
-                        @if($search)
-                            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
-                                Pencarian: {{ $search }}
-                                <button wire:click="$set('search', '')" class="ml-2 text-blue-600 hover:text-blue-800">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
-                                    </svg>
-                                </button>
-                            </span>
-                        @endif
-                        
-                        <button wire:click="$set('search', '')" class="text-sm text-blue-600 hover:text-blue-800 flex items-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                            </svg>
-                            Reset semua filter
-                        </button>
-                    </div>
+                    @if ($organization || $tag)
+                        <div class="mb-4 flex flex-wrap gap-2">
+                            @if ($organization)
+                                @php $org = $organizations->firstWhere('slug', $organization); @endphp
+                                <span
+                                    class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
+                                    Organisasi: {{ $org->name ?? $organization }}
+                                    <button wire:click="$set('organization', null)"
+                                        class="ml-2 text-blue-600 hover:text-blue-800">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20"
+                                            fill="currentColor">
+                                            <path fill-rule="evenodd"
+                                                d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                                                clip-rule="evenodd" />
+                                        </svg>
+                                    </button>
+                                </span>
+                            @endif
+
+                            @if ($tag)
+                                @php $tagItem = $tags->firstWhere('slug', $tag); @endphp
+                                <span
+                                    class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
+                                    Tag: {{ $tagItem->name ?? $tag }}
+                                    <button wire:click="$set('tag', null)"
+                                        class="ml-2 text-blue-600 hover:text-blue-800">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20"
+                                            fill="currentColor">
+                                            <path fill-rule="evenodd"
+                                                d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                                                clip-rule="evenodd" />
+                                        </svg>
+                                    </button>
+                                </span>
+                            @endif
+
+                            @if ($search)
+                                <span
+                                    class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
+                                    Pencarian: {{ $search }}
+                                    <button wire:click="$set('search', '')"
+                                        class="ml-2 text-blue-600 hover:text-blue-800">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20"
+                                            fill="currentColor">
+                                            <path fill-rule="evenodd"
+                                                d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                                                clip-rule="evenodd" />
+                                        </svg>
+                                    </button>
+                                </span>
+                            @endif
+
+                            <button wire:click="$set('search', '')"
+                                class="text-sm text-blue-600 hover:text-blue-800 flex items-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none"
+                                    viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                                </svg>
+                                Reset semua filter
+                            </button>
+                        </div>
                     @endif
-                    
+
                     <!-- Search Box dengan Icon -->
                     <div class="relative max-w-5xl">
                         <div class="relative flex items-center">
-                            <input type="text" 
-                                placeholder="Cari dataset..." 
-                                wire:model.live="search"
+                            <input type="text" placeholder="Cari dataset..." wire:model.live="search"
                                 class="w-full pl-4 pr-12 py-3 text-gray-700 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 text-base placeholder-gray-400" />
-                            
+
                             <!-- Tombol Reset (X) -->
-                            @if($search)
-                                <button 
-                                    type="button"
-                                    wire:click="$set('search', '')"
+                            @if ($search)
+                                <button type="button" wire:click="$set('search', '')"
                                     class="absolute right-16 mr-1 p-2 bg-red-100 text-red-600 rounded-lg hover:bg-red-200 active:bg-red-300 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-opacity-50 transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-sm">
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                        stroke-width="2" stroke="currentColor" class="w-5 h-5">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M6 18L18 6M6 6l12 12" />
                                     </svg>
                                     <span class="sr-only">Hapus pencarian</span>
                                 </button>
                             @endif
-                            
+
                             <!-- Tombol Search -->
-                            <button 
-                                type="submit"
+                            <button type="submit"
                                 class="absolute right-2 p-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 active:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50 transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-md">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
-                                    stroke="currentColor" class="w-6 h-6">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                    stroke-width="2" stroke="currentColor" class="w-6 h-6">
                                     <path stroke-linecap="round" stroke-linejoin="round"
                                         d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
                                 </svg>
@@ -353,10 +375,13 @@
                                             d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m5.231 13.481L15 17.25m-2.5-0H15m-3.75-3.75h.008v.008h-.008v-.008Zm0 3h.008v.008h-.008v-.008Zm0 3h.008v.008h-.008v-.008Zm-3.75-6.75h.008v.008h-.008v-.008Zm0 3h.008v.008h-.008v-.008Zm0 3h.008v.008h-.008v-.008Zm3-9h.008v.008h-.008v-.008Zm0 3h.008v.008h-.008v-.008Z" />
                                     </svg>
                                 </div>
-                                <h3 class="text-lg font-medium text-gray-700 mb-2">Tidak ada dataset yang ditemukan</h3>
-                                <p class="text-gray-500 mb-4">Coba gunakan kata kunci lain atau hapus beberapa filter</p>
-                                @if($search || $organization || $tag)
-                                    <button wire:click="$set('search', '')" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                                <h3 class="text-lg font-medium text-gray-700 mb-2">Tidak ada dataset yang ditemukan
+                                </h3>
+                                <p class="text-gray-500 mb-4">Coba gunakan kata kunci lain atau hapus beberapa filter
+                                </p>
+                                @if ($search || $organization || $tag)
+                                    <button wire:click="$set('search', '')"
+                                        class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
                                         Hapus Semua Filter
                                     </button>
                                 @endif
@@ -365,8 +390,57 @@
                     </div>
 
                     <!-- Pagination -->
-                    <div class="mt-8">
-                        {{ $datasets->links() }}
+                    <div class="mt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+                        <div class="text-sm text-gray-600">
+                            Menampilkan {{ $datasets->firstItem() }} kepada {{ $datasets->lastItem() }} dari {{ $datasets->total() }} hasil
+                        </div>
+                        <nav class="flex items-center space-x-1">
+                            {{-- Previous Page Link --}}
+                            @if ($datasets->onFirstPage())
+                                <span class="px-3 py-1 rounded border border-gray-300 text-gray-400 cursor-not-allowed">
+                                    &laquo;
+                                </span>
+                                <span class="px-3 py-1 rounded border border-gray-300 text-gray-400 cursor-not-allowed">
+                                    Sebelumnya
+                                </span>
+                            @else
+                                <button wire:click="setPage(1)" class="px-3 py-1 rounded border border-gray-300 bg-white text-gray-700 hover:bg-gray-50">
+                                    &laquo;
+                                </button>
+                                <button wire:click="previousPage" class="px-3 py-1 rounded border border-gray-300 bg-white text-gray-700 hover:bg-gray-50">
+                                    Sebelumnya
+                                </button>
+                            @endif
+
+                            {{-- Pagination Elements --}}
+                            @foreach ($datasets->links()->elements[0] as $page => $url)
+                                @if (is_string($page))
+                                    <span class="px-3 py-1 rounded border border-gray-300 text-gray-600">...</span>
+                                @else
+                                    <button wire:click="setPage({{ $page }})" 
+                                            class="px-3 py-1 rounded border {{ $page == $datasets->currentPage() ? 'bg-blue-500 text-white border-blue-500' : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50' }}">
+                                        {{ $page }}
+                                    </button>
+                                @endif
+                            @endforeach
+
+                            {{-- Next Page Link --}}
+                            @if ($datasets->hasMorePages())
+                                <button wire:click="nextPage" class="px-3 py-1 rounded border border-gray-300 bg-white text-gray-700 hover:bg-gray-50">
+                                    Berikutnya
+                                </button>
+                                <button wire:click="setPage({{ $datasets->lastPage() }})" class="px-3 py-1 rounded border border-gray-300 bg-white text-gray-700 hover:bg-gray-50">
+                                    &raquo;
+                                </button>
+                            @else
+                                <span class="px-3 py-1 rounded border border-gray-300 text-gray-400 cursor-not-allowed">
+                                    Berikutnya
+                                </span>
+                                <span class="px-3 py-1 rounded border border-gray-300 text-gray-400 cursor-not-allowed">
+                                    &raquo;
+                                </span>
+                            @endif
+                        </nav>
                     </div>
                 </div>
         </div>

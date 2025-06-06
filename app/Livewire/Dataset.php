@@ -14,9 +14,9 @@ use Illuminate\Support\Facades\Request;
 class Dataset extends Component
 {
     use WithPagination;
-    
-    protected $paginationTheme = 'bootstrap'; // Jika menggunakan Bootstrap, sesuaikan dengan tema yang digunakan
-    
+
+    protected $paginationTheme = 'tailwind'; // Menggunakan tema Tailwind untuk pagination
+
     // Reset pagination saat filter berubah
     public function updatingSearch()
     {
@@ -30,7 +30,7 @@ class Dataset extends Component
     {
         $this->reset(['search', 'organization', 'tag']);
         $this->resetPage();
-        
+
         // Redirect ke halaman dataset tanpa parameter
         return redirect()->route('datasets.index');
     }
@@ -47,7 +47,7 @@ class Dataset extends Component
     public $totalDatasets = 0;
     public $showAllFormats = false;
     protected $queryString = ['search', 'orderBy', 'organization', 'tag'];
-    
+
     /**
      * Mount the component with optional organization and tag parameters
      */
@@ -57,7 +57,7 @@ class Dataset extends Component
         $this->tag = $tag;
         $this->showAllFormats = false; // Default value
     }
-    
+
     public function toggleShowAllFormats()
     {
         $this->showAllFormats = !$this->showAllFormats;
@@ -69,7 +69,7 @@ class Dataset extends Component
         $this->organizations = Organization::withCount('datasets')
             ->orderByDesc('datasets_count')
             ->get();
-            
+
         // Ambil semua tag dengan jumlah dataset
         $this->tags = Tag::withCount('datasets')
             ->orderByDesc('datasets_count')
@@ -83,24 +83,24 @@ class Dataset extends Component
         if ($this->search) {
             $query->where(function ($q) {
                 $q->where('judul', 'like', '%' . $this->search . '%')
-                  ->orWhere('deskripsi_dataset', 'like', '%' . $this->search . '%')
-                  ->orWhereYear('tanggal_rilis', 'like', '%' . $this->search . '%')
-                  ->orWhereHas('organization', function($q2) {
-                      $q2->where('name', 'like', '%' . $this->search . '%');
-                  });
+                    ->orWhere('deskripsi_dataset', 'like', '%' . $this->search . '%')
+                    ->orWhereYear('tanggal_rilis', 'like', '%' . $this->search . '%')
+                    ->orWhereHas('organization', function ($q2) {
+                        $q2->where('name', 'like', '%' . $this->search . '%');
+                    });
             });
         }
 
         // Filter berdasarkan organisasi yang dipilih
         if ($this->organization) {
-            $query->whereHas('organization', function($q) {
+            $query->whereHas('organization', function ($q) {
                 $q->where('slug', $this->organization);
             });
         }
 
         // Filter berdasarkan tag yang dipilih
         if ($this->tag) {
-            $query->whereHas('tags', function($q) {
+            $query->whereHas('tags', function ($q) {
                 $q->where('slug', $this->tag);
             });
         }
@@ -111,7 +111,7 @@ class Dataset extends Component
         } else {
             $query->orderByDesc('created_at');
         }
-        
+
         $this->totalDatasets = (clone $query)->count();
         $datasets = $query->paginate(10);
 
