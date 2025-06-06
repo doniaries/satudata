@@ -171,11 +171,18 @@ class DatasetResource extends Resource
                                             ->label('Tanggal Rilis')
                                             ->native(false)
                                             ->default(now())
-                                            ->required(),
+                                            ->displayFormat('d/m/Y')
+                                            ->firstDayOfWeek(7) // 7 = Sunday
+                                            ->required()
+                                            ->suffixIcon('heroicon-o-calendar')
+                                            ->closeOnDateSelection()
+                                            ->locale('id'),
 
-                                        Forms\Components\DateTimePicker::make('tahun_rilis')
+                                        Forms\Components\Select::make('tahun_rilis')
                                             ->label('Tahun Rilis')
-                                            ->default(now()->year),
+                                            ->options(range(now()->year, 2010, -1))
+                                            ->default(now()->year)
+                                            ->searchable(),
 
                                     ])
                                     ->columns(1),
