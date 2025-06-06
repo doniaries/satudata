@@ -217,7 +217,7 @@ class DatasetResource extends Resource
                                         Forms\Components\TextInput::make('email_pemelihara_data')
                                             ->label('Email Pemelihara')
                                             ->email()
-                                            ->default(fn() => auth()->user()?->organization?->email)
+                                            ->default(fn() => auth()->user()?->organization?->email_organisasi)
                                             ->disabled()
                                             ->dehydrated(),
 
