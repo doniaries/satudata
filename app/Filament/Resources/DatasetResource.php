@@ -10,11 +10,12 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use function Livewire\wrap;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Illuminate\Support\Facades\Auth;
 
-use function Livewire\wrap;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 class DatasetResource extends Resource
 {
@@ -35,30 +36,62 @@ class DatasetResource extends Resource
                     ->dehydrated(),
                 Forms\Components\TextInput::make('judul')
                     ->required()
+                    ->live(onBlur: true)
+                    ->afterStateUpdated(function ($state, callable $set) {
+                        $set('slug', Str::slug($state));
+                    })
                     ->maxLength(255),
-                Forms\Components\TextInput::make('slug')
-                    ->required()
-                    ->maxLength(255),
+                Forms\Components\Hidden::make('slug')
+                    ->disabled()
+                    ->dehydrated(),
                 Forms\Components\Textarea::make('deskripsi_dataset')
                     ->required()
                     ->columnSpanFull(),
                 // Field satuan
                 Forms\Components\Select::make('satuan_id')
                     ->label('Satuan')
-                    ->relationship('satuan', 'nama_satuan')
+                    ->options(fn() => \App\Models\Satuan::pluck('nama_satuan', 'id'))
+                    ->createOptionForm([
+                        Forms\Components\TextInput::make('nama_satuan')
+                            ->label('Nama Satuan')
+                            ->required()
+                            ->maxLength(255)
+                            ->unique('satuans', 'nama_satuan')
+                            ->columnSpanFull(),
+                    ])
+                    ->createOptionAction(
+                        fn(Forms\Components\Actions\Action $action) => $action
+                            ->modalHeading('Tambah Satuan Baru')
+                            ->modalDescription('Masukkan nama satuan baru')
+                            ->modalSubmitActionLabel('Simpan')
+                            ->modalWidth('sm')
+                    )
+                    ->createOptionUsing(function (array $data) {
+                        // Check if satuan with same name already exists
+                        $existingSatuan = \App\Models\Satuan::where('nama_satuan', $data['nama_satuan'])->first();
+                        
+                        if ($existingSatuan) {
+                            return $existingSatuan->id;
+                        }
+                        
+                        return \App\Models\Satuan::create($data)->id;
+                    })
                     ->searchable()
                     ->preload()
                     ->required(),
-                    
+
                 // Field ukuran
                 Forms\Components\Select::make('ukuran_id')
                     ->label('Ukuran')
-                    ->relationship('ukuran', 'nama_ukuran')
+                    ->unique(ignoreRecord: true)
+                    ->options(fn() => \App\Models\Ukuran::pluck('nama_ukuran', 'id'))
                     ->searchable()
                     ->preload()
                     ->required(),
+
+                // Tags with pluck for better performance
                 Forms\Components\CheckboxList::make('tags')
-                    ->relationship('tags', 'name')
+                    ->options(fn() => \App\Models\Tag::pluck('name', 'id'))
                     ->columns(2)
                     ->label('Tag Dataset')
                     ->required(),
@@ -138,12 +171,18 @@ class DatasetResource extends Resource
                     ->searchable(),
                 // Tables\Columns\TextColumn::make('slug')
                 //     ->searchable(),
-                Tables\Columns\TextColumn::make('satuan')
+                Tables\Columns\TextColumn::make('satuan.nama_satuan')
                     ->label('Satuan')
-                    ->searchable(),
+                    ->searchable()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('ukuran.nama_ukuran')
+                    ->label('Ukuran')
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('frekuensi_pembaruan')
                     ->label('Pembaruan')
-                    ->searchable(),
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('dasar_rujukan_prioritas')
                     ->label('Dasar Rujukan Prioritas')
                     ->wrap()
