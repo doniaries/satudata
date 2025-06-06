@@ -45,11 +45,10 @@ class DatasetResource extends Resource
                                             ->live(onBlur: true)
                                             ->afterStateUpdated(fn(string $operation, $state, callable $set) => $operation === 'create' ? $set('slug', Str::slug($state)) : null),
 
-                                        Forms\Components\TextInput::make('slug')
+                                        Forms\Components\Hidden::make('slug')
                                             ->disabled()
                                             ->dehydrated()
                                             ->required()
-                                            ->maxLength(255)
                                             ->unique(Dataset::class, 'slug', ignoreRecord: true),
 
                                         Forms\Components\Textarea::make('deskripsi_dataset')
@@ -58,65 +57,70 @@ class DatasetResource extends Resource
                                             ->columnSpanFull(),
 
                                         // Satuan with pluck for better performance
-                                        Forms\Components\Select::make('satuan_id')
-                                            ->label('Satuan')
-                                            ->options(fn() => \App\Models\Satuan::pluck('nama_satuan', 'id'))
-                                            ->createOptionForm([
-                                                Forms\Components\TextInput::make('nama_satuan')
-                                                    ->label('Nama Satuan')
-                                                    ->required()
-                                                    ->maxLength(255)
-                                                    ->unique('satuans', 'nama_satuan')
-                                                    ->columnSpanFull(),
-                                            ])
-                                            ->createOptionAction(
-                                                fn(Forms\Components\Actions\Action $action) => $action
-                                                    ->modalHeading('Tambah Satuan Baru')
-                                                    ->modalDescription('Masukkan nama satuan baru')
-                                                    ->modalSubmitActionLabel('Simpan')
-                                                    ->modalWidth('sm')
-                                            )
-                                            ->createOptionUsing(function (array $data) {
-                                                $existingSatuan = \App\Models\Satuan::where('nama_satuan', $data['nama_satuan'])->first();
-                                                if ($existingSatuan) {
-                                                    return $existingSatuan->id;
-                                                }
-                                                return \App\Models\Satuan::create($data)->id;
-                                            })
-                                            ->searchable()
-                                            ->preload()
-                                            ->required(),
+                                        // Satuan and Ukuran in one row
+                                        Forms\Components\Grid::make(2)
+                                            ->schema([
+                                                // Satuan field
+                                                Forms\Components\Select::make('satuan_id')
+                                                    ->label('Satuan')
+                                                    ->options(fn() => \App\Models\Satuan::pluck('nama_satuan', 'id'))
+                                                    ->createOptionForm([
+                                                        Forms\Components\TextInput::make('nama_satuan')
+                                                            ->label('Nama Satuan')
+                                                            ->required()
+                                                            ->maxLength(255)
+                                                            ->unique('satuans', 'nama_satuan')
+                                                            ->columnSpanFull(),
+                                                    ])
+                                                    ->createOptionAction(
+                                                        fn(Forms\Components\Actions\Action $action) => $action
+                                                            ->modalHeading('Tambah Satuan Baru')
+                                                            ->modalDescription('Masukkan nama satuan baru')
+                                                            ->modalSubmitActionLabel('Simpan')
+                                                            ->modalWidth('sm')
+                                                    )
+                                                    ->createOptionUsing(function (array $data) {
+                                                        $existingSatuan = \App\Models\Satuan::where('nama_satuan', $data['nama_satuan'])->first();
+                                                        if ($existingSatuan) {
+                                                            return $existingSatuan->id;
+                                                        }
+                                                        return \App\Models\Satuan::create($data)->id;
+                                                    })
+                                                    ->searchable()
+                                                    ->preload()
+                                                    ->required(),
 
-                                        // Ukuran field
-                                        Forms\Components\Select::make('ukuran_id')
-                                            ->label('Ukuran')
-                                            ->options(fn() => \App\Models\Ukuran::pluck('nama_ukuran', 'id'))
-                                            ->createOptionForm([
-                                                Forms\Components\TextInput::make('nama_ukuran')
-                                                    ->label('Nama Ukuran')
-                                                    ->required()
-                                                    ->maxLength(255)
-                                                    ->unique('ukurans', 'nama_ukuran')
-                                                    ->columnSpanFull(),
-                                            ])
-                                            ->createOptionAction(
-                                                fn(Forms\Components\Actions\Action $action) => $action
-                                                    ->modalHeading('Tambah Ukuran Baru')
-                                                    ->modalDescription('Masukkan nama ukuran baru')
-                                                    ->modalSubmitActionLabel('Simpan')
-                                                    ->modalWidth('sm')
-                                            )
-                                            ->createOptionUsing(function (array $data) {
-                                                $existingUkuran = \App\Models\Ukuran::where('nama_ukuran', $data['nama_ukuran'])->first();
-                                                if ($existingUkuran) {
-                                                    return $existingUkuran->id;
-                                                }
-                                                return \App\Models\Ukuran::create($data)->id;
-                                            })
-                                            ->searchable()
-                                            ->preload()
-                                            ->required(),
-
+                                                // Ukuran field
+                                                Forms\Components\Select::make('ukuran_id')
+                                                    ->label('Ukuran')
+                                                    ->options(fn() => \App\Models\Ukuran::pluck('nama_ukuran', 'id'))
+                                                    ->createOptionForm([
+                                                        Forms\Components\TextInput::make('nama_ukuran')
+                                                            ->label('Nama Ukuran')
+                                                            ->required()
+                                                            ->maxLength(255)
+                                                            ->unique('ukurans', 'nama_ukuran')
+                                                            ->columnSpanFull(),
+                                                    ])
+                                                    ->createOptionAction(
+                                                        fn(Forms\Components\Actions\Action $action) => $action
+                                                            ->modalHeading('Tambah Ukuran Baru')
+                                                            ->modalDescription('Masukkan nama ukuran baru')
+                                                            ->modalSubmitActionLabel('Simpan')
+                                                            ->modalWidth('sm')
+                                                    )
+                                                    ->createOptionUsing(function (array $data) {
+                                                        $existingUkuran = \App\Models\Ukuran::where('nama_ukuran', $data['nama_ukuran'])->first();
+                                                        if ($existingUkuran) {
+                                                            return $existingUkuran->id;
+                                                        }
+                                                        return \App\Models\Ukuran::create($data)->id;
+                                                    })
+                                                    ->searchable()
+                                                    ->preload()
+                                                    ->required(),
+                                            ]),
+                                        // Other input fields
                                         // Tags with multiple select and create option
                                         Forms\Components\Select::make('tags')
                                             ->label('Tag Dataset')
@@ -146,10 +150,7 @@ class DatasetResource extends Resource
                                                     ->modalSubmitActionLabel('Simpan')
                                                     ->modalWidth('sm')
                                             )
-                                            ->required()
-                                            ->columnSpanFull(),
-
-                                        // Other input fields
+                                            ->required(),
                                         Forms\Components\TextInput::make('frekuensi_pembaruan')
                                             ->label('Frekuensi Pembaruan')
                                             ->maxLength(255),
@@ -168,11 +169,14 @@ class DatasetResource extends Resource
 
                                         Forms\Components\DatePicker::make('tanggal_rilis')
                                             ->label('Tanggal Rilis')
+                                            ->native(false)
+                                            ->default(now())
                                             ->required(),
 
-                                        Forms\Components\TextInput::make('tahun_rilis')
+                                        Forms\Components\DateTimePicker::make('tahun_rilis')
                                             ->label('Tahun Rilis')
-                                            ->maxLength(255),
+                                            ->default(now()->year),
+
                                     ])
                                     ->columns(1),
                             ])
@@ -187,7 +191,7 @@ class DatasetResource extends Resource
                                     ->schema([
                                         // Author information
                                         Forms\Components\TextInput::make('penulis_kontak')
-                                            ->label('Penulis Kontak')
+                                            ->label('Penulis')
                                             ->default(fn() => auth()->user()?->name)
                                             ->required()
                                             ->maxLength(255)
@@ -218,26 +222,21 @@ class DatasetResource extends Resource
                                             ->dehydrated(),
 
                                         // Audit trail display
-                                        Forms\Components\Placeholder::make('created_by_name')
+                                        Forms\Components\TextInput::make('created_by_name')
                                             ->label('Dibuat oleh')
-                                            ->content(fn($record) => $record?->createdBy?->name ?? auth()->user()?->name),
-
-                                        Forms\Components\Placeholder::make('updated_by_name')
+                                            ->default(fn() => auth()->user()?->name)
+                                            ->disabled()
+                                            ->dehydrated(),
+                                        Forms\Components\TextInput::make('updated_by_name')
                                             ->label('Diedit terakhir')
-                                            ->content(fn($record) => $record?->updatedBy?->name ?? auth()->user()?->name),
-
-                                        // Hidden fields for tracking
-                                        Forms\Components\Hidden::make('created_by')
-                                            ->default(fn() => auth()->id())
+                                            ->default(fn() => auth()->user()?->name)
+                                            ->disabled()
                                             ->dehydrated(),
 
-                                        Forms\Components\Hidden::make('updated_by')
-                                            ->default(fn() => auth()->id())
-                                            ->dehydrated(),
                                     ])
-                                    ->columns(1)
-                                    ->collapsible()
-                                    ->collapsed(fn($operation) => $operation === 'create'),
+                                    ->columns(1),
+                                // ->collapsible()
+                                // ->collapsed(fn($operation) => $operation === 'create'),
                             ])
                             ->columnSpan([
                                 'lg' => 1,
