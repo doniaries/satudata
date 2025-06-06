@@ -132,7 +132,7 @@ class DatasetResource extends Resource
                             ->required()
                             ->maxLength(255)
                             ->unique('tags', 'slug')
-                            ->dehydrateStateUsing(fn ($state) => \Illuminate\Support\Str::slug($state))
+                            ->dehydrateStateUsing(fn($state) => \Illuminate\Support\Str::slug($state))
                             ->columnSpanFull(),
                     ])
                     ->createOptionAction(
@@ -150,25 +150,52 @@ class DatasetResource extends Resource
                     ->maxLength(255),
                 Forms\Components\TextInput::make('lisensi')
                     ->maxLength(255),
+                // Penulis Kontak
                 Forms\Components\TextInput::make('penulis_kontak')
+                    ->label('Penulis Kontak')
+                    ->default(fn() => auth()->user()?->name)
+                    ->required()
                     ->maxLength(255),
+
+                // Email Penulis
                 Forms\Components\TextInput::make('email_penulis_kontak')
+                    ->label('Email Penulis')
                     ->email()
+                    ->default(fn() => auth()->user()?->email)
+                    ->required()
                     ->maxLength(255),
+
+                // Hidden fields for tracking
+                Forms\Components\Hidden::make('created_by')
+                    ->default(fn() => auth()->id())
+                    ->dehydrated(),
+
+                Forms\Components\Hidden::make('updated_by')
+                    ->default(fn() => auth()->id())
+                    ->dehydrated(),
+
+                // Display fields
                 Forms\Components\Placeholder::make('created_by_name')
                     ->label('Dibuat oleh')
-                    ->content(fn($record) => $record?->createdBy?->name ?? '-'),
+                    ->content(fn() => auth()->user()?->name),
+
                 Forms\Components\Placeholder::make('updated_by_name')
                     ->label('Diedit oleh')
-                    ->content(fn($record) => $record?->updatedBy?->name ?? '-'),
+                    ->content(fn() => auth()->user()?->name),
+
+                // Organization Info
                 Forms\Components\TextInput::make('pemelihara_data')
                     ->label('Pemelihara Data (Organisasi)')
                     ->default(fn() => auth()->user()?->organization?->name)
-                    ->disabled(), // or ->readonly()
+                    ->disabled()
+                    ->dehydrated(),
+
                 Forms\Components\TextInput::make('email_pemelihara_data')
+                    ->label('Email Pemelihara')
                     ->email()
                     ->default(fn() => auth()->user()?->organization?->email)
-                    ->disabled(), // or ->readonly()
+                    ->disabled()
+                    ->dehydrated(),
                 Forms\Components\TextInput::make('sumber_data')
                     ->maxLength(255),
                 Forms\Components\DatePicker::make('tanggal_rilis')
@@ -195,11 +222,11 @@ class DatasetResource extends Resource
                     ->maxLength(255),
                 Forms\Components\Placeholder::make('created_by_name')
                     ->label('Dibuat oleh')
-                    ->content(fn($record) => $record?->createdBy?->name ?? '-'),
+                    ->default(fn() => auth()->user()?->organization?->name),
 
                 Forms\Components\Placeholder::make('updated_by_name')
                     ->label('Diedit oleh')
-                    ->content(fn($record) => $record?->updatedBy?->name ?? '-'),
+                    ->default(fn() => auth()->user()?->organization?->name),
                 Forms\Components\Toggle::make('is_publik')
                     ->required(),
 
