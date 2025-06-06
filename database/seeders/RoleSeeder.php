@@ -23,15 +23,16 @@ class RoleSeeder extends Seeder
         // Get all permissions
         $permissions = Permission::all();
 
-        // Assign all permissions to super_admin
+        // Assign all permissions to super_admin and admin_satudata
         $superAdmin->syncPermissions($permissions);
+        $adminSatudata->syncPermissions($permissions);
 
-        // Assign specific permissions to admin
-        $adminPermissions = $permissions->filter(function ($permission) {
-            return !str_contains($permission->name, 'role') &&
-                !str_contains($permission->name, 'permission');
+        // Assign all permissions except for organization and user to admin_opd
+        $adminOpdPermissions = $permissions->filter(function ($permission) {
+            return !str_contains($permission->name, 'organization') &&
+                   !str_contains($permission->name, 'user');
         });
-        $adminSatudata->syncPermissions($adminPermissions);
+        $adminOpd->syncPermissions($adminOpdPermissions);
 
         // Assign basic permissions to user
         $userPermissions = $permissions->filter(function ($permission) {
