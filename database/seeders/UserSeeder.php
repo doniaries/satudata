@@ -94,7 +94,7 @@ class UserSeeder extends Seeder
      */
     private function ensureRolesExist(): void
     {
-        $roles = ['super_admin', 'admin_opd', 'user'];
+        $roles = ['super_admin', 'admin_satudata', 'admin_opd'];
 
         foreach ($roles as $roleName) {
             Role::firstOrCreate([
