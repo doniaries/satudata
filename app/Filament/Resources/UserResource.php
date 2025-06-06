@@ -13,6 +13,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Auth;
+use STS\FilamentImpersonate\Tables\Actions\Impersonate;
 
 class UserResource extends Resource
 {
@@ -92,6 +93,12 @@ class UserResource extends Resource
                 //
             ])
             ->actions([
+                Impersonate::make() //untuk peniruan user
+                    ->visible(
+                        fn($record) =>
+                        auth()->user()->hasRole('super_admin') ||
+                            $record->teams()->whereIn('id', auth()->user()->teams->pluck('id'))->exists()
+                    ),
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
