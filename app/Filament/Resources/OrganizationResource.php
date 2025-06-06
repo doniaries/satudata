@@ -31,12 +31,9 @@ class OrganizationResource extends Resource
                         $set('slug', Str::slug($state));
                     })
                     ->maxLength(255),
-                Forms\Components\TextInput::make('slug')
-                    ->readOnly(),
-                Forms\Components\FileUpload::make('url_logo')
-                    ->label('Logo Organisasi')
-                    ->image()
-                    ->imageEditor(),
+                Forms\Components\Hidden::make('slug')
+                    ->disabled()
+                    ->dehydrated(),
                 Forms\Components\TextInput::make('alamat')
                     ->maxLength(255),
                 Forms\Components\TextInput::make('nomor_telepon')
@@ -63,6 +60,10 @@ class OrganizationResource extends Resource
                     ->label('Youtube Organisasi')
                     ->placeholder('https://youtube.com/organization')
                     ->maxLength(255),
+                Forms\Components\FileUpload::make('url_logo')
+                    ->label('Logo Organisasi')
+                    ->image()
+                    ->imageEditor(),
             ]);
     }
 
@@ -106,6 +107,7 @@ class OrganizationResource extends Resource
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
+            ->defaultSort('created_at', 'desc')
             ->filters([
                 //
             ])
