@@ -69,11 +69,11 @@ class DatasetResource extends Resource
                     ->createOptionUsing(function (array $data) {
                         // Check if satuan with same name already exists
                         $existingSatuan = \App\Models\Satuan::where('nama_satuan', $data['nama_satuan'])->first();
-                        
+
                         if ($existingSatuan) {
                             return $existingSatuan->id;
                         }
-                        
+
                         return \App\Models\Satuan::create($data)->id;
                     })
                     ->searchable()
@@ -83,18 +83,67 @@ class DatasetResource extends Resource
                 // Field ukuran
                 Forms\Components\Select::make('ukuran_id')
                     ->label('Ukuran')
-                    ->unique(ignoreRecord: true)
                     ->options(fn() => \App\Models\Ukuran::pluck('nama_ukuran', 'id'))
+                    ->createOptionForm([
+                        Forms\Components\TextInput::make('nama_ukuran')
+                            ->label('Nama Ukuran')
+                            ->required()
+                            ->maxLength(255)
+                            ->unique('ukurans', 'nama_ukuran')
+                            ->columnSpanFull(),
+                    ])
+                    ->createOptionAction(
+                        fn(Forms\Components\Actions\Action $action) => $action
+                            ->modalHeading('Tambah Ukuran Baru')
+                            ->modalDescription('Masukkan nama ukuran baru')
+                            ->modalSubmitActionLabel('Simpan')
+                            ->modalWidth('sm')
+                    )
+                    ->createOptionUsing(function (array $data) {
+                        // Check if ukuran with same name already exists
+                        $existingUkuran = \App\Models\Ukuran::where('nama_ukuran', $data['nama_ukuran'])->first();
+
+                        if ($existingUkuran) {
+                            return $existingUkuran->id;
+                        }
+
+                        return \App\Models\Ukuran::create($data)->id;
+                    })
                     ->searchable()
                     ->preload()
                     ->required(),
 
-                // Tags with pluck for better performance
-                Forms\Components\CheckboxList::make('tags')
-                    ->options(fn() => \App\Models\Tag::pluck('name', 'id'))
-                    ->columns(2)
+                // Tags with multiple select and create option
+                Forms\Components\Select::make('tags')
                     ->label('Tag Dataset')
-                    ->required(),
+                    ->relationship('tags', 'name')
+                    ->multiple()
+                    ->preload()
+                    ->searchable()
+                    ->createOptionForm([
+                        Forms\Components\TextInput::make('name')
+                            ->label('Nama Tag')
+                            ->required()
+                            ->maxLength(255)
+                            ->unique('tags', 'name')
+                            ->columnSpanFull(),
+                        Forms\Components\TextInput::make('slug')
+                            ->label('Slug')
+                            ->required()
+                            ->maxLength(255)
+                            ->unique('tags', 'slug')
+                            ->dehydrateStateUsing(fn ($state) => \Illuminate\Support\Str::slug($state))
+                            ->columnSpanFull(),
+                    ])
+                    ->createOptionAction(
+                        fn(Forms\Components\Actions\Action $action) => $action
+                            ->modalHeading('Tambah Tag Baru')
+                            ->modalDescription('Masukkan nama tag baru')
+                            ->modalSubmitActionLabel('Simpan')
+                            ->modalWidth('sm')
+                    )
+                    ->required()
+                    ->columnSpanFull(),
                 Forms\Components\TextInput::make('frekuensi_pembaruan')
                     ->maxLength(255),
                 Forms\Components\TextInput::make('dasar_rujukan_prioritas')
