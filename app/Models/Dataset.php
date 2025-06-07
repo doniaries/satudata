@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use App\Models\Organization;
 use App\Models\Tag;
 use App\Models\Resource;
 use App\Models\Satuan;
@@ -74,10 +73,6 @@ class Dataset extends Model
     {
         return $this->belongsTo(Team::class, 'id_team');
     }
-
-    /**
-     * Get the organization that owns the dataset (if still needed).
-     */
 
 
     /**
