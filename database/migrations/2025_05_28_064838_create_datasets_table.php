@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('datasets', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('id_organization')->constrained('organizations')->onDelete('cascade'); // Produsen Data
+            $table->foreignId('id_team')->constrained('teams')->onDelete('cascade'); // Produsen Data
             $table->string('judul');
             $table->string('slug')->unique();
             $table->text('deskripsi_dataset');
@@ -41,6 +41,8 @@ return new class extends Migration
             $table->unsignedBigInteger('ukuran_file')->nullable(); // Dalam bytes
             $table->dateTime('terakhir_diubah')->nullable();
             $table->unsignedInteger('jumlah_diunduh')->default(0);
+            $table->string('kepatuhan_standar_data')->nullable();
+            $table->unsignedInteger('jumlah_dilihat')->default(0);
 
             $table->foreignId('created_by_user_id')->nullable()->constrained('users')->onDelete('set null');
             $table->foreignId('updated_by_user_id')->nullable()->constrained('users')->onDelete('set null');

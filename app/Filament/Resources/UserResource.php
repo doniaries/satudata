@@ -32,8 +32,8 @@ class UserResource extends Resource
 
         return $form
             ->schema([
-                Forms\Components\Select::make('id_organisasi')
-                    ->relationship('organization', 'name')
+                Forms\Components\Select::make('id_team')
+                    ->relationship('team', 'name')
                     ->label('Organisasi')
                     ->searchable()
                     ->preload()
@@ -41,7 +41,7 @@ class UserResource extends Resource
                         // Mengambil pengguna yang sedang login
                         $user = Auth::user();
                         // Mengembalikan id_organisasi dari pengguna jika ada
-                        return $user ? $user->organization->id : null;
+                        return $user ? $user->currentTeam->id : null;
                     })
                     ->required(),
                 Forms\Components\TextInput::make('name')
@@ -66,7 +66,7 @@ class UserResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('organization.name')
+                Tables\Columns\TextColumn::make('team.name')
                     ->label('Organisasi')
                     ->searchable()
                     ->sortable(),

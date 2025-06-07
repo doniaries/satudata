@@ -33,8 +33,28 @@ class AdminPanelProvider extends PanelProvider
             ->login()
             ->sidebarCollapsibleOnDesktop()
             ->font('Poppins')
+            ->favicon(asset('images/favicon.png'))
             ->colors([
+                'danger' => Color::Red,
+                'gray' => Color::Zinc,
+                'info' => Color::Blue,
                 'primary' => Color::Amber,
+                'success' => Color::Green,
+                'warning' => Color::Yellow,
+
+                // Warna tambahan yang menarik
+                'purple' => Color::Purple,
+                'indigo' => Color::Indigo,
+                'cyan' => Color::Cyan,
+                'emerald' => Color::Emerald,
+                'teal' => Color::Teal,
+                'orange' => Color::Orange,
+                'rose' => Color::Rose,
+                'pink' => Color::Pink,
+                'sky' => Color::Sky,
+                'lime' => Color::Lime,
+                'fuchsia' => Color::Fuchsia,
+                'violet' => Color::Violet,
             ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
@@ -82,6 +102,10 @@ class AdminPanelProvider extends PanelProvider
                     ]),
                 \Hasnayeen\Themes\ThemesPlugin::make(),
                 FilamentBackgroundsPlugin::make(),
-            ]);
+            ])
+            ->tenant(
+                Team::class,
+                slugAttribute: 'slug',
+            );
     }
 }

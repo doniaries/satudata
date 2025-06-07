@@ -14,23 +14,19 @@ use App\Models\Resource;
 use App\Models\Satuan;
 use App\Models\Ukuran;
 use App\Models\User;
+use App\Models\Team;
 
 class Dataset extends Model
 {
     use HasFactory, SoftDeletes;
 
-
-    protected $table = 'datasets'; // Sesuai dengan nama tabel di migrasi
-
-
+    protected $table = 'datasets';
 
     protected $fillable = [
-        'id_organization',
+        'id_team', // Sesuai dengan migration
         'judul',
         'slug',
         'deskripsi_dataset',
-        'satuan_id',
-        'ukuran_id',
         'frekuensi_pembaruan',
         'dasar_rujukan_prioritas',
         'lisensi',
@@ -46,31 +42,43 @@ class Dataset extends Model
         'url_kamus_data',
         'created_by_user_id',
         'updated_by_user_id',
+        // Kolom resource yang ada di migration
+        'nama_resource',
+        'deskripsi_resource',
+        'satuan_id',
+        'ukuran_id',
+        'file_path',
+        'format',
+        'ukuran_file',
+        'terakhir_diubah',
+        'jumlah_diunduh',
+        'kepatuhan_standar_data',
+        'jumlah_dilihat',
     ];
 
     protected $casts = [
         'tanggal_rilis' => 'date',
         'tanggal_modifikasi_metadata' => 'date',
+        'terakhir_diubah' => 'datetime',
         'is_publik' => 'boolean',
         'metadata_tambahan' => 'array',
         'jumlah_dilihat' => 'integer',
+        'jumlah_diunduh' => 'integer',
+        'ukuran_file' => 'integer',
     ];
 
     /**
-     * Get the organization that owns the dataset.
+     * Get the team that owns the dataset.
      */
-    public function organization(): BelongsTo
+    public function team(): BelongsTo
     {
-        return $this->belongsTo(Organization::class, 'id_organization', 'id');
+        return $this->belongsTo(Team::class, 'id_team');
     }
 
     /**
-     * Get all resources for the dataset.
+     * Get the organization that owns the dataset (if still needed).
      */
-    // public function resources(): HasMany
-    // {
-    //     return $this->hasMany(Resource::class);
-    // }
+
 
     /**
      * Get the user who created the dataset.
@@ -91,7 +99,7 @@ class Dataset extends Model
     /**
      * Get the satuan for the dataset.
      */
-    public function satuan()
+    public function satuan(): BelongsTo
     {
         return $this->belongsTo(Satuan::class, 'satuan_id');
     }
@@ -99,7 +107,7 @@ class Dataset extends Model
     /**
      * Get the ukuran for the dataset.
      */
-    public function ukuran()
+    public function ukuran(): BelongsTo
     {
         return $this->belongsTo(Ukuran::class, 'ukuran_id');
     }

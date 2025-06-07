@@ -2,14 +2,12 @@
 
 namespace App\Livewire;
 
+use App\Models\Dataset as DatasetModel;
+use App\Models\Tag;
+use App\Models\Team;
+use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 use Livewire\WithPagination;
-
-use App\Models\Dataset as DatasetModel;
-use App\Models\Organization;
-use App\Models\Tag;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Request;
 
 class Dataset extends Component
 {
@@ -28,7 +26,7 @@ class Dataset extends Component
      */
     public function clearFilters()
     {
-        $this->reset(['search', 'organization', 'tag']);
+        $this->reset(['search', 'team', 'tag']);
         $this->resetPage();
 
         // Redirect ke halaman dataset tanpa parameter
@@ -40,20 +38,20 @@ class Dataset extends Component
      */
     public $search = '';
     public $orderBy = 'relevansi';
-    public $organization = null;
+    public $team = null;
     public $tag = null;
-    public $organizations = [];
+    public $teams = [];
     public $tags = [];
     public $totalDatasets = 0;
     public $showAllFormats = false;
-    protected $queryString = ['search', 'orderBy', 'organization', 'tag'];
+    protected $queryString = ['search', 'orderBy', 'team', 'tag'];
 
     /**
-     * Mount the component with optional organization and tag parameters
+     * Mount the component with optional team and tag parameters
      */
-    public function mount($organization = null, $tag = null)
+    public function mount($team = null, $tag = null)
     {
-        $this->organization = $organization;
+        $this->team = $team;
         $this->tag = $tag;
         $this->showAllFormats = false; // Default value
     }
@@ -66,7 +64,7 @@ class Dataset extends Component
     public function render()
     {
         // Ambil semua organisasi dengan jumlah dataset
-        $this->organizations = Organization::withCount('datasets')
+        $this->teams = Team::withCount('datasets')
             ->orderByDesc('datasets_count')
             ->get();
 
@@ -76,7 +74,7 @@ class Dataset extends Component
             ->get();
 
         // Query dataset
-        $query = DatasetModel::with(['organization', 'tags'])
+        $query = DatasetModel::with(['team', 'tags'])
             ->where('is_publik', true);
 
         // Filter berdasarkan pencarian
@@ -85,16 +83,16 @@ class Dataset extends Component
                 $q->where('judul', 'like', '%' . $this->search . '%')
                     ->orWhere('deskripsi_dataset', 'like', '%' . $this->search . '%')
                     ->orWhereYear('tanggal_rilis', 'like', '%' . $this->search . '%')
-                    ->orWhereHas('organization', function ($q2) {
+                    ->orWhereHas('team', function ($q2) {
                         $q2->where('name', 'like', '%' . $this->search . '%');
                     });
             });
         }
 
         // Filter berdasarkan organisasi yang dipilih
-        if ($this->organization) {
-            $query->whereHas('organization', function ($q) {
-                $q->where('slug', $this->organization);
+        if ($this->team) {
+            $query->whereHas('team', function ($q) {
+                $q->where('slug', $this->team);
             });
         }
 
@@ -125,7 +123,7 @@ class Dataset extends Component
         return view('livewire.dataset', [
             'datasets' => $datasets,
             'totalDatasets' => $this->totalDatasets,
-            'organizations' => $this->organizations,
+            'teams' => $this->teams,
             'tags' => $this->tags,
             'formats' => $formats,
             'showAllFormats' => $this->showAllFormats,

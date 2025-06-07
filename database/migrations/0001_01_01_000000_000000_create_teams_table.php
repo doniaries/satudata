@@ -1,8 +1,10 @@
 <?php
 
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
+use App\Models\Team;
+use App\Models\User;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
 return new class extends Migration
 {
@@ -11,10 +13,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('organizations', function (Blueprint $table) {
+        Schema::create('teams', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('slug')->unique(); // Untuk URL dan pencarian cepat
+            $table->string('slug');
             $table->string('url_logo')->nullable();
             $table->string('alamat')->nullable();
             $table->string('nomor_telepon')->nullable();
@@ -30,6 +32,15 @@ return new class extends Migration
             // Indeks tambahan
             $table->index('name'); // Indeks untuk pencarian berdasarkan nama
         });
+
+        Schema::create('team_user', function (Blueprint $table) {
+            // $table->id();
+            $table->foreignIdFor(Team::class)->index();
+            $table->foreignIdFor(User::class)->index();
+            $table->timestamps();
+
+            $table->unique(['team_id', 'user_id']);
+        });
     }
 
     /**
@@ -37,6 +48,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('organisasis');
+        Schema::dropIfExists('teams');
+        Schema::dropIfExists('team_user');
     }
 };

@@ -24,7 +24,7 @@ class UserSeeder extends Seeder
                     'name' => 'Super Admin',
                     'password' => Hash::make('@Iamsuperadmin'),
                     'is_active' => true,
-                    'id_organization' => '10', // Super admin tidak terikat ke organisasi tertentu
+                    'id_team' => '10', // Super admin tidak terikat ke organisasi tertentu
                 ]
             );
 
@@ -41,7 +41,7 @@ class UserSeeder extends Seeder
                     'name' => 'Admin Satudata',
                     'password' => Hash::make('password'),
                     'is_active' => true,
-                    'id_organization' => '10',
+                    'id_team' => '10',
                 ]
             );
 
@@ -53,39 +53,45 @@ class UserSeeder extends Seeder
             }
 
             // Ambil semua organisasi yang ada
-            $organizations = Organization::all();
+            $teams = \App\Models\Team::all();
 
-            // Buat user untuk setiap organisasi
-            foreach ($organizations as $organization) {
+            // Ambil semua teams
+            $teams = \App\Models\Team::get()->values(); // numerik
+            // Buat user untuk setiap organisasi dan assign ke team
+            foreach ($teams as $idx => $team) {
                 // Skip creating user for super_admin's organization if it's null
-                if ($organization->id === null) {
+                if ($team->id === null) {
                     continue;
                 }
 
-                $emailSlug = str_replace('-', '', $organization->slug);
-                $email = "admin{$emailSlug}@sijunjung.go.id";
-
                 $user = User::updateOrCreate(
-                    ['email' => $email],
                     [
-                        'name' => "Admin {$organization->name}",
-                        'password' => Hash::make('password'), // Password default
-                        'id_organization' => $organization->id,
+                        'email' => 'user_' . $team->slug . '@satudata.id',
+                    ],
+                    [
+                        'name' => 'User ' . $team->name,
+                        'password' => Hash::make('password'),
                         'is_active' => true,
+                        'id_team' => $team->id,
                     ]
                 );
 
-                // Assign role admin_opd dengan pengecekan
-                if (Role::where('name', 'admin_opd')->exists()) {
-                    $user->assignRole('admin_opd');
+                // Assign role user_satudata jika ada
+                if (Role::where('name', 'user_satudata')->exists()) {
+                    $user->assignRole('user_satudata');
                 } else {
-                    $this->command->warn("Role admin_opd tidak ditemukan");
+                    $this->command->warn('Role user_satudata tidak ditemukan');
+                }
+
+                // Assign user ke team (mapping by urutan)
+                $team = $teams->get($idx) ?? $teams->first();
+                if ($team) {
+                    $user->teams()->syncWithoutDetaching([$team->id]);
                 }
             }
 
             $this->command->info('UserSeeder berhasil dijalankan!');
             $this->command->info('Super Admin: superadmin@gmail.com / @Iamsuperadmin');
-            $this->command->info('Sample Admin OPD: admin[organizationslug]@sijunjung.go.id / password');
         });
     }
 

@@ -3,7 +3,7 @@
 namespace App\Providers;
 
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
-use Illuminate\Support\Facades\Gate;
+use Filament\Facades\Filament;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -22,5 +22,13 @@ class AuthServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->registerPolicies();
+
+        Filament::serving(function () {
+            if (auth()->check() && !auth()->user()->isActive()) {
+                auth()->logout();
+                session()->flash('error', 'Akses ditolak! Akun Anda tidak aktif. Silakan hubungi administrator.');
+                redirect('/admin/login')->send();
+            }
+        });
     }
 }

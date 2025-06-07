@@ -13,7 +13,7 @@ trait GenerateSlug
 
         $allSlugs = DB::table($tableName)
             ->select('slug')
-            ->where('slug', 'like', $slug.'%')
+            ->where('slug', 'like', $slug . '%')
             ->get();
 
         if (! $allSlugs->contains('slug', $slug)) {
@@ -21,7 +21,7 @@ trait GenerateSlug
         }
 
         for ($i = 1; $i <= 100; $i++) {
-            $newSlug = $slug.'-'.$i;
+            $newSlug = $slug . '-' . $i;
 
             if (! $allSlugs->contains('slug', $newSlug)) {
                 return $newSlug;

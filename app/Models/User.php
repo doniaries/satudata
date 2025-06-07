@@ -40,8 +40,50 @@ class User extends Authenticatable implements FilamentUser
     ];
 
 
-    public function organization(): BelongsTo
+    public function canImpersonate()
     {
-        return $this->belongsTo(Organization::class, 'id_organization', 'id');
+        return true;
+    }
+
+
+    public function getTenants(Panel $panel): Collection
+    {
+        return $this->teams;
+    }
+
+    public function team()
+    {
+        return $this->teams()
+            ->where('teams.id', Filament::getTenant()?->id);
+    }
+
+    public function teams(): BelongsToMany
+    {
+        return $this->belongsToMany(Team::class)
+            ->withTimestamps();
+    }
+
+    public function canAccessTenant(Model $tenant): bool
+    {
+        return $this->teams->contains($tenant);
+    }
+
+    public function canAccessPanel(Panel $panel): bool
+    {
+        return true;
+    }
+
+    // Tambahkan method untuk cek status
+    public function isActive(): bool
+    {
+        return $this->is_active;
+    }
+
+    // Method untuk mencegah login jika tidak aktif
+    protected static function booted()
+    {
+        static::creating(function ($user) {
+            $user->is_active = true; // Set default ke aktif
+        });
     }
 }

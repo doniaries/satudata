@@ -24,7 +24,7 @@ class DatasetResource extends Resource
         $user = Auth::user();
         $isSuperAdmin = $user->hasRole('super_admin');
         $isAdminSatuData = $user->hasRole('admin_satudata');
-        $userOrganizationId = $user->organization_id;
+        $userTeamId = $user->currentTeamId;
 
         return $form
             ->schema([
@@ -52,20 +52,20 @@ class DatasetResource extends Resource
                                             ->required()
                                             ->unique(Dataset::class, 'slug', ignoreRecord: true),
 
-                                        Forms\Components\Select::make('id_organization')
+                                        Forms\Components\Select::make('id_team')
                                             ->label('Organisasi')
-                                            ->relationship('organization', 'name')
-                                            ->default($userOrganizationId)
+                                            ->relationship('team', 'name')
+                                            ->default($userTeamId)
                                             ->required()
                                             ->disabled(fn() => !$isSuperAdmin && !$isAdminSatuData)
                                             ->dehydrated()
-                                            ->afterStateHydrated(function ($component) use ($userOrganizationId) {
+                                            ->afterStateHydrated(function ($component) use ($userTeamId) {
                                                 if (!$component->getState()) {
-                                                    $component->state($userOrganizationId);
+                                                    $component->state($userTeamId);
                                                 }
                                             })
                                             ->helperText(fn() => (!$isSuperAdmin && !$isAdminSatuData)
-                                                ? 'Organisasi Anda: ' . \App\Models\Organization::find($userOrganizationId)?->name
+                                                ? 'Organisasi Anda: ' . \App\Models\Team::find($userTeamId)?->name
                                                 : null)
                                             ->columnSpanFull(),
 
